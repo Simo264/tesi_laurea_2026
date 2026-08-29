@@ -1,0 +1,33 @@
+\makeatletter
+\newcommand{\beginitalianAbstract}{%
+  \thispagestyle{plain}%
+  \begin{center}
+    \setlength{\parskip}{0pt}
+    {\huge\textit{Abstract}\par}
+    \bigskip
+    {\normalsize\bf \ttitle \par}
+    \bigskip
+  \end{center}
+}
+\makeatother
+
+\newcommand{\ttitle}{Floorplan3D:  implementazione di una pipeline per la generazione di mesh 3D a partire da modelli CAD 2D di planimetrie architettoniche}
+
+\beginitalianAbstract
+\addcontentsline{toc}{chapter}{Abstract}
+
+L'abstract è il riassunto della tesi. Deve dare in poche righe (in genere 150-300 parole, una mezza pagina), una visione completa e autosufficiente del lavoro: problema, approccio, risultati, senza bisogno di leggere il resto.
+
+1. Contesto e problema (2-3 righe)
+Qual è il problema generale? Perché è rilevante? Nel tuo caso: la difficoltà di ottenere modelli 3D di ambienti architettonici a partire da planimetrie 2D CAD, utili per rendering, visualizzazione, ecc.
+
+2. La sfida specifica (1-2 righe)
+Cosa rende il problema difficile? Nel tuo caso: l'assenza di uno standard unico tra i modelli CAD, che rende difficile generalizzare un algoritmo.
+
+3. Cosa hai fatto (il cuore dell'abstract, 4-6 righe)
+Qui descrivi Floorplan3D: un sistema/pipeline che, a partire da un file DXF con muri, porte e finestre, produce una mesh 3D esportata in GLTF. Vale la pena accennare, senza entrare troppo nei dettagli implementativi, alle fasi principali della pipeline (parsing, ricostruzione geometrica dei varchi, estrazione del grafo planare e delle facce, triangolazione ed estrusione), perché è proprio questo il contributo tecnico del lavoro.
+
+4. Risultati/validazione (1-2 righe)
+Cosa hai ottenuto? Hai testato su più planimetrie reali? Hai fatto un confronto qualitativo, dei rendering finali in Blender, delle metriche sui tempi di elaborazione, sulla qualità della mesh? Anche un risultato qualitativo ("il sistema produce mesh corrette e prive di artefatti su planimetrie reali di complessità variabile") va benissimo se non hai metriche quantitative.
+
+

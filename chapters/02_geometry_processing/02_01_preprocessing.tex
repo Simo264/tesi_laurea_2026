@@ -1,0 +1,55 @@
+\section{Preprocessing}
+\label{sec:preprocessing}
+
+% ------------ bozza ------------
+
+Come caso di studio prendiamo il modello DXF e lo apriamo con LibreCAD per analizzarlo:
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{~/Pictures/Screenshots/screen001.png}
+	\caption{draftsperson\_HousePlan.dxf}
+	\label{fig:screen001}
+\end{figure}
+
+Isoliamo inizialmente solo i layer dei muri e osserviamo che qua sono presenti: WALL EXTERNAL (in giallo) e WALL INTERNAL. 
+I segmenti in giallo relativi a WALL EXTERNAL sono ridondanti, inutili e possono essere tranquillamente rimossi. Osserviamo che le primitive dei muri non sono polilinee chiuse ma sono segmenti che formano dei contorni aperti (facce aperte), la geometria sembra quasi rotta. Poi vediamo. Inoltre sono presenti due segmenti che creano rumore e che possono essere rimossi tranquillamente.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{~/Pictures/Screenshots/screen003.png}
+	\caption{Mura interne}
+	\label{fig:screen003}
+\end{figure}
+
+Dopo avere corretto questi problemi, abbiamo la seguente rappresentazione delle mura:
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{~/Pictures/Screenshots/screen004.png}
+	\caption{Mura ricostruite}
+	\label{fig:screen004}
+\end{figure}
+
+Nonostante le mura sono ancora separate tra di loro (per la presenza di porte e finestre),  quello che otteniamo sono una lista di poligoni chiusi.
+
+Adesso analizziamo le finestre: qua vediamo proprio come le finestre siano rappresentate in modo sbagliato; una finestra è un blocco (BLOCK) che contiene centinaia di segmenti, vediamo anche come due finestre addirittura si accavallano, una persino esce dalle mura ed entra nella stanza.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{~/Pictures/Screenshots/screen005.png}
+	\caption{Mura e finestre}
+	\label{fig:screen005}
+\end{figure}
+
+Dopo che abbiamo corretto anche le finestre avremo la seguente rappresentazione più pulita, pronta per passo successivo.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{~/Pictures/Screenshots/screen006.png}
+	\caption{Rappresentazione corretta}
+	\label{fig:screen006}
+\end{figure}
+
+
+% -------------------------------
