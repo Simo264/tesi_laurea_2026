@@ -1,0 +1,19 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{SpatialHash}
+\PYG{p}{\PYGZob{}}
+\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{  }\PYG{n}{SpatialHash}\PYG{p}{(}\PYG{n}{f64}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1e\PYGZhy{}4}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}
+\PYG{+w}{  }\PYG{n}{m\PYGZus{}epsilon}\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{m\PYGZus{}epsilon\PYGZus{}sq}\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{+w}{	}
+\PYG{+w}{  }\PYG{n}{VertexId}\PYG{+w}{ }\PYG{n}{snap}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{VertexId}\PYG{+w}{ }\PYG{n+nf}{find\PYGZus{}nearest}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
+\PYG{+w}{	}
+\PYG{k}{private}\PYG{o}{:}
+\PYG{+w}{  }\PYG{n}{CellCoord}\PYG{+w}{ }\PYG{n}{get\PYGZus{}cell}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{);}
+
+\PYG{+w}{  }\PYG{n}{f64}\PYG{+w}{ }\PYG{n}{m\PYGZus{}epsilon}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{m\PYGZus{}epsilon\PYGZus{}sq}\PYG{p}{;}
+
+\PYG{+w}{  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{unordered\PYGZus{}map}\PYG{o}{\PYGZlt{}}\PYG{n}{CellCoord}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{VertexId}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{CellCoordHash}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{m\PYGZus{}grid}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{m\PYGZus{}vertices}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+\end{MintedVerbatim}

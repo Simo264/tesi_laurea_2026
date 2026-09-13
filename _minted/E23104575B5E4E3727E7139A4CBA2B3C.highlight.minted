@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{DRWParser::addBlock}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Block}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{p}{(}\PYG{n}{data}\PYG{p}{.}\PYG{n}{name}\PYG{p}{.}\PYG{n}{contains}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}BLOCK\PYGZhy{}DOOR\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{||}
+\PYG{+w}{     }\PYG{n}{data}\PYG{p}{.}\PYG{n}{name}\PYG{p}{.}\PYG{n}{contains}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}BLOCK\PYGZhy{}WINDOW\PYGZdq{}}\PYG{p}{))}
+\PYG{+w}{  }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

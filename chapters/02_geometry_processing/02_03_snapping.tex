@@ -1,2 +1,61 @@
 \section{Collasso dei vertici}
 \label{sec:snapping}
+
+A questo punto il parser produce una raccolta di segmenti che non sono collegati tra loro: non abbiamo ancora una rappresentazione globale della geometria.
+
+Nei modelli CAD è abbastanza comune che in uno stesso punto siano presenti più vertici sovrapposti, appartenenti a segmenti diversi. Il passo successivo consiste quindi nell'effettuare il collasso dei vertici, comunemente noto come \emph{vertex snapping}. Questa operazione serve sia per ottimizzare la computazione, riducendo il numero di vertici da elaborare, sia perché la geometria dovrà in seguito essere rappresentata come grafo, il che richiede vertici univoci.
+
+L'obiettivo è quindi prendere l'insieme dei segmenti e produrre una nuova rappresentazione in cui i vertici degli estremi che distano meno di $\epsilon$ l'uno dall'altro vengono collassati in un unico vertice rappresentativo.
+
+Per risolvere questo problema è necessaria una struttura dati spaziale efficiente. Tra le opzioni possibili, come un K-D Tree, si è scelto di utilizzare un \emph{hash spaziale}, concettualmente più semplice da implementare e ben adatto a questo caso d'uso. Un hash spaziale divide lo spazio 2D in una griglia regolare, in cui ogni cella ha dimensione fissa pari a $\epsilon$; a ogni punto viene assegnata esattamente una cella in base alle sue coordinate (x,y). La proprietà chiave di questa struttura è che, se due punti distano meno di $\epsilon$, essi si trovano necessariamente nella stessa cella oppure in una delle celle immediatamente adiacenti. Invece di confrontare ogni nuovo punto con tutti i punti già inseriti (complessità $O(N)$), è quindi sufficiente calcolare la cella di appartenenza del punto e controllare solo le 9 celle vicine (griglia 3$\times$3), riducendo la complessità dell'operazione di snap a un tempo pressoché costante nella pratica.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.5\textwidth]{images/02_geometry_processing/spatial_hash.png}
+	\caption{Spatial Hash}
+	\label{fig:spatial_hash}
+\end{figure}
+
+La dimensione della cella non è arbitraria: se le celle fossero più grandi (ad esempio $2\epsilon$), sarebbe comunque necessario controllare una griglia 3$\times$3, ma con un numero maggiore di punti per cella da confrontare. Se invece fossero più piccole (ad esempio $\epsilon / 2$), sarebbe necessario estendere la ricerca a una griglia 5$\times$5 (25 celle) per coprire correttamente il raggio $\epsilon$. Per questo motivo, mantenere la dimensione della cella esattamente pari a $\epsilon$ e limitare la ricerca alla griglia 3$\times$3 rappresenta il miglior compromesso tra memoria e velocità.
+
+In questa fase è fondamentale tarare in modo adeguato il parametro $\epsilon$: un valore troppo grande rischia di collassare erroneamente vertici distinti (ad esempio due angoli ravvicinati ma geometricamente reali), mentre un valore troppo piccolo lascia vertici duplicati che possono compromettere la costruzione del grafo nella fase successiva.
+
+\newpage
+La classe che implementa questa struttura si presenta come segue:
+\begin{minted}[frame=single]{cpp}
+class SpatialHash
+{
+public:
+  SpatialHash(f64 epsilon = 1e-4) : 
+  m_epsilon{ epsilon}, m_epsilon_sq{ epsilon * epsilon } {}
+	
+  VertexId snap(glm::dvec2 p);
+  VertexId find_nearest(glm::dvec2 p) const;
+	
+private:
+  CellCoord get_cell(glm::dvec2 p);
+
+  f64 m_epsilon, m_epsilon_sq;
+
+  std::unordered_map<CellCoord, std::vector<VertexId>, CellCoordHash> m_grid;
+  std::vector<glm::dvec2> m_vertices;
+};
+\end{minted}
+
+Il parametro $\epsilon$ definisce sia la dimensione della cella sia la tolleranza massima per il merging dei vertici. Il metodo principale è \texttt{snap()}, che:
+\begin{itemize}
+	\item prende un punto $p$ e cerca nella griglia $3\times 3$ un vertice già esistente che disti meno di $\epsilon$;
+	\item se lo trova, restituisce il \texttt{VertexId} del vertice esistente (il nuovo punto viene collassato su di esso e scartato);
+	\item se non lo trova, crea un nuovo vertice, lo memorizza nella griglia e ne restituisce il nuovo \texttt{VertexId}.
+\end{itemize}
+
+Il metodo \texttt{find\_nearest()}, invece, restituisce l'ID del vertice più vicino al punto $p$ all'interno dell'intero hash. Questo metodo verrà utilizzato nella fase di ricostruzione dei varchi (Sezione~\ref{sec:gaps_reconstruction}) per individuare i vertici dei muri più vicini ai segmenti di porte e finestre.
+
+In questo esempio, con $\epsilon = 0.01$, il numero di vertici sui segmenti dei muri si riduce da 177 a 88, ovvero una riduzione di circa il 50\%.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{images/02_geometry_processing/snapping.png}
+	\caption{Entrambi i grafici sono identici. Il secondo contiene la metà dei vertici}
+	\label{fig:snapping}
+\end{figure}

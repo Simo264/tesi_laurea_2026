@@ -13,11 +13,13 @@ Mentre DWG e DXF sono standard de facto nel campo del CAD sono diversi tra loro 
 \section{I problemi dei modelli CAD: eterogeneità e mancanza di standard}
 \label{sec:problemi_modelli_CAD}
 
-Il formato DXF non fornisce direttamente poligoni, bensì un insieme di entità geometriche disconnesse tra loro, quali \texttt{POLYLINE}, \texttt{LINE}, \texttt{ARC}, \texttt{BLOCK} ecc., organizzate in layer identificati da un nome. È qui che emerge la prima criticità: non esiste alcuno standard che imponga una convenzione univoca sui nomi dei layer. Uno stesso layer contenente i muri può essere chiamato, a seconda del modello, \texttt{WALLS}, \texttt{A-WALL}, \texttt{WALL EXTERNAL}, \texttt{WALL INTERNAL}, e così via.
+Il formato DXF non fornisce direttamente poligoni, bensì un insieme di entità geometriche disconnesse tra loro, quali \texttt{POLYLINE}, \texttt{LINE}, \texttt{ARC} ecc., organizzate in layer e blocchi. È qui che emerge la prima criticità: non esiste alcuno standard che imponga una convenzione univoca sui nomi dei layer o dei blocchi. Un architetto può decidere di nominare i layer in un certo modo, e un altro architetto in un modo diverso. Questo vale anche per i blocchi, che molto spesso presentano nomi privi di significato.
 
-Un secondo problema riguarda la rappresentazione geometrica degli elementi. Non esiste uno standard neppure per la rappresentazione consistente dei muri: alcuni modelli li descrivono tramite polilinee, altri tramite semplici segmenti. Isolando le sole primitive relative ai muri, inoltre, si osservano ulteriori problemi ricorrenti: segmenti che si intersecano impropriamente tra loro, e contorni di muri che risultano aperti anziché chiusi.
+Un secondo problema riguarda la rappresentazione geometrica degli elementi. Per quanto riguarda i muri, ad esempio, un architetto può rappresentarle con un semplice contorno privo di spessore, mentre un altro le disegna con uno spessore definito. Alcuni utilizzano polilinee che definiscono contorni già chiusi, altri invece semplici segmenti che spesso si intersecano impropriamente tra loro e risultano aperti, facendo apparire la geometria come "rotta".
 
-Anche le finestre presentano una notevole variabilità rappresentativa: alcuni modelli le descrivono come blocchi complessi composti da migliaia di segmenti, altri come semplici segmenti che collegano due muri, altri ancora come rettangoli definiti da quattro segmenti. Le porte, al contrario, tendono a essere rappresentate in modo più uniforme tra i vari modelli, tipicamente tramite archi; nel caso peggiore, tuttavia, anche una porta, in particolare quella d'ingresso, può essere rappresentata tramite polilinee o segmenti anziché tramite un arco.
+Non solo i muri, ma anche le finestre presentano una notevole variabilità: alcuni architetti le descrivono come blocchi complessi composti da centinaia di segmenti, altri come semplici segmenti che collegano due pareti, altri ancora come rettangoli definiti da quattro lati, con ulteriori segmenti interni per rappresentare il vetro.
+
+Le porte, invece, tendono a essere rappresentate in modo più uniforme tra i vari modelli, tipicamente tramite archi; in alcuni modelli, tuttavia, in particolare per le porte d'ingresso, possono essere rappresentate tramite polilinee o segmenti anziché tramite un arco.
 
 Questa eterogeneità è la ragione principale per cui non è possibile progettare un algoritmo generale in grado di elaborare correttamente qualsiasi modello CAD. È necessaria, a monte dell'elaborazione automatica, una fase di preprocessing volta a rendere il modello quanto più consistente possibile (Capitolo \ref{ch:geometry_processing}).
 
@@ -26,7 +28,7 @@ Questa eterogeneità è la ragione principale per cui non è possibile progettar
 
 Per affrontare queste criticità vengono fatte delle assunzioni ragionevoli, che consentono di semplificare il problema:
 \begin{enumerate}
-	\item i layer relativi a pareti, porte e finestre devono avere nomi riconoscibili (ad esempio \texttt{A-WALL}, \texttt{A-DOOR}, \texttt{A-WINDOW}). L'utente è tenuto a rinominarli manualmente;
-	\item i muri devono essere già rappresentati come facce chiuse (poligoni), dotate di proprio spessore; eventuali \emph{crack} o discontinuità nei contorni devono essere riparate manualmente prima dell'esecuzione mediante software di editing CAD (come LibreCAD);
+	\item i layer e i blocchi relativi a pareti, porte e finestre devono avere nomi riconoscibili (ad esempio \texttt{A-WALL}, \texttt{A-DOOR}, \texttt{A-WINDOW}, \texttt{BLOCK-WINDOW}, \texttt{BLOCK-DOOR})
+	\item i muri devono essere rappresentati come facce chiuse (poligoni), dotate di proprio spessore; eventuali \emph{crack} o discontinuità nei contorni devono essere riparate manualmente prima dell'esecuzione mediante software di editing CAD (come LibreCAD);
 	\item le porte e finestre sono considerati buchi, o discontinuità,  nelle pareti e verranno trattati come tali durante la fase di estrusione, con altezze differenziate
 \end{enumerate}

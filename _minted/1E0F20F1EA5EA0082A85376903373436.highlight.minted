@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{SegmentLayer}\PYG{+w}{ }\PYG{n+nf}{classify\PYGZus{}layer}\PYG{p}{(}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string\PYGZus{}view}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{name}\PYG{p}{.}\PYG{n}{compare}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}A\PYGZhy{}DOOR\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{SegmentLayer}\PYG{o}{::}\PYG{n}{Door}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{name}\PYG{p}{.}\PYG{n}{compare}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}A\PYGZhy{}WALL\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{SegmentLayer}\PYG{o}{::}\PYG{n}{Wall}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{name}\PYG{p}{.}\PYG{n}{compare}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}A\PYGZhy{}WINDOW\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{SegmentLayer}\PYG{o}{::}\PYG{n}{Window}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{SegmentLayer}\PYG{o}{::}\PYG{n}{None}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

@@ -1,0 +1,21 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{enum}\PYG{+w}{ }\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{SegmentLayer}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{i32}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{None}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Wall}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Window}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Door}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{k}{struct}\PYG{+w}{ }\PYG{n+nc}{Segment}\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{start}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{end}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{SegmentLayer}\PYG{+w}{ }\PYG{n}{layer}\PYG{p}{;}\PYG{+w}{ }\PYG{p}{\PYGZcb{};}
+\PYG{+w}{	}
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{DRWParser}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{k}{public}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Interface}
+\PYG{p}{\PYGZob{}}
+\PYG{k}{public}\PYG{o}{:}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n}{addLine}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Line}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addLWPolyline}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}LWPolyline}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addArc}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Arc}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addInsert}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Insert}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addBlock}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Block}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{endBlock}\PYG{p}{()}\PYG{+w}{ }\PYG{k}{override}\PYG{p}{;}
+\PYG{+w}{	}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addHatch}\PYG{p}{([[}\PYG{n}{maybe\PYGZus{}unused}\PYG{p}{]]}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Hatch}\PYG{o}{*}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{+w}{  }\PYG{k}{virtual}\PYG{+w}{ }\PYG{k+kt}{void}\PYG{+w}{ }\PYG{n+nf}{addCircle}\PYG{p}{([[}\PYG{n}{maybe\PYGZus{}unused}\PYG{p}{]]}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{DRW\PYGZus{}Circle}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{data}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{override}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
+\PYG{+w}{  }\PYG{p}{...}
+\PYG{+w}{  }\PYG{n}{SegmentLayer}\PYG{+w}{ }\PYG{n}{classify\PYGZus{}layer}\PYG{p}{(}\PYG{n}{std}\PYG{o}{::}\PYG{n}{string\PYGZus{}view}\PYG{+w}{ }\PYG{n}{name}\PYG{p}{);}\PYG{+w}{	}
+\PYG{+w}{  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Segment}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{walls}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{doors}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{windows}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+\end{MintedVerbatim}

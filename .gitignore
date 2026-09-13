@@ -1,0 +1,36 @@
+## File di output principali
+*.synctex.gz
+*.synctex(busy)
+
+## File temporanei di compilazione standard
+*.aux
+*.log
+*.toc
+*.fls
+*.fdb_latexmk
+*.out
+*.bbl
+*.blg
+*.brf
+*.bcf
+*.run.xml
+*.idx
+*.ind
+*.ilg
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.lof
+*.lot
+*.lol
+
+## File temporanei degli editor (TeXStudio, VS Code, Overleaf, ecc.)
+*.bak
+*.sav
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
