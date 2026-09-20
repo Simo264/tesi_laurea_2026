@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{CGAL}\PYG{o}{::}\PYG{n}{Arrangement\PYGZus{}2}\PYG{+w}{ }\PYG{n+nf}{build\PYGZus{}arrangement}\PYG{p}{(}
+\PYG{+w}{  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{vertices}\PYG{p}{,}
+\PYG{+w}{  }\PYG{k}{const}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Edge}\PYG{o}{\PYGZgt{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{edges}
+\PYG{p}{);}
+
+\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Face}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{extract\PYGZus{}faces}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{n}{Arrangement}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{arr}\PYG{p}{);}
+\end{MintedVerbatim}

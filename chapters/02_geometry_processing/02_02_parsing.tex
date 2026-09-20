@@ -8,7 +8,7 @@ L'obiettivo della fase di parsing è estrarre da queste primitive le informazion
 
 Si consideri il modello CAD corretto durante il preprocessing, che presenta layer standardizzati (\texttt{A-WALL}, \texttt{A-DOOR}, \texttt{A-WINDOW}) e blocchi rinominati (\texttt{BLOCK-DOOR-1}, \texttt{BLOCK-WINDOW-1}, \ldots, \texttt{BLOCK-WINDOW-4}).
 
-Il parsing viene realizzato in C++ mediante la libreria open source \href{https://github.com/Codelibs/libdxfrw}{libdxfrw}, che fornisce un'interfaccia per la lettura dei file DXF. La classe del parser implementa le callback necessarie per gestire i diversi tipi di entità:
+Il parsing viene realizzato in C++ mediante la libreria libdxfrw \cite{libdxfrw}, che fornisce un'interfaccia per la lettura dei file DXF. La classe del parser implementa le callback necessarie per gestire i diversi tipi di entità:
 \begin{minted}[frame=single]{cpp}
 enum class SegmentLayer : i32 { None=0, Wall, Window, Door };
 struct Segment{ glm::dvec2 start, end; SegmentLayer layer; };

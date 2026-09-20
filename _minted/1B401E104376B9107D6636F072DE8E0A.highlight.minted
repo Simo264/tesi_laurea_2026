@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{mesh\PYGZus{}vertices}\PYG{+w}{       }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{Vertex}\PYG{o}{\PYGZgt{}}\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{mesh\PYGZus{}floor\PYGZus{}indices}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{u32}\PYG{o}{\PYGZgt{}}\PYG{p}{\PYGZob{}\PYGZcb{};}
+\PYG{k}{auto}\PYG{+w}{ }\PYG{n}{mesh\PYGZus{}wall\PYGZus{}indices}\PYG{+w}{   }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{u32}\PYG{o}{\PYGZgt{}}\PYG{p}{\PYGZob{}\PYGZcb{};}
+\end{MintedVerbatim}

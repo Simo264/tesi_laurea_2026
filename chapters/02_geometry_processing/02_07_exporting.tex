@@ -1,0 +1,45 @@
+\section{Esportazione}
+\label{sec:export}
+
+Come ultimo passo, la mesh viene esportata come file GLTF. Vengono esportate le informazioni relative alla mesh: vertici (posizioni, normali, coordinate texture), indici e primitive. È necessario, in particolare, differenziare all'interno della mesh stessa quali primitive (triangoli) corrispondono al pavimento e quali invece appartengono a muri e soffitto; questa suddivisione viene realizzata sfruttando gli indici. Durante la procedura di generazione della mesh vengono infatti mantenute separatamente le seguenti informazioni:
+\begin{minted}[frame=single]{cpp}
+auto mesh_vertices       = std::vector<Vertex>{};
+auto mesh_floor_indices  = std::vector<u32>{};
+auto mesh_wall_indices   = std::vector<u32>{};
+\end{minted}
+
+I vertici sono sempre gli stessi, ma è possibile mappare un intervallo di indici per il pavimento e un intervallo distinto per muri e soffitto. Questo è necessario perché, una volta importato il modello in Blender, occorre poter distinguere il pavimento dal resto della geometria, per poter applicare materiali differenti.
+
+\subsection{Gestione degli asset tramite placeholder}
+\label{subsec:placeholders}
+
+Attualmente le porte e le finestre sono rappresentate come semplici buchi nei muri, ma questo non è sufficiente: si vuole poter inserire, in corrispondenza di quelle aperture, dei modelli 3D di porte e finestre.
+
+Una prima ipotesi era inserire tali asset direttamente nel processo di generazione della mesh, ma questo approccio risulta poco conveniente. Se, ad esempio, in un appartamento sono presenti 10 porte identiche, la relativa geometria verrebbe duplicata 10 volte, aumentando notevolmente la dimensione del file GLTF, tanto più se si considera che un modello dettagliato può contare centinaia di migliaia di triangoli. Inoltre, per cambiare l'asset di una porta o modificarne l'orientamento, sarebbe necessario rieseguire l'intera pipeline; sarebbe infine necessario preservare anche i materiali originali del modello scaricato, complicando ulteriormente il processo.
+
+La soluzione più flessibile e mantenibile è un approccio a placeholder, gestito interamente in Blender. La fase di classificazione delle facce viene quindi estesa: quando una faccia viene riconosciuta come porta o finestra, se ne calcola e serializza un \emph{oriented bounding box} (OBB) dell'apertura, memorizzandone centro, larghezza, altezza, spessore, rotazione e tipo. In questo modo non vengono esportati placeholder geometrici, ma unicamente i dati delle aperture.
+
+Una volta raccolte le informazioni sulle aperture di porte e finestre, queste vengono esportate in un file JSON separato, che verrà usato da Blender per per posizionare i rispettivi modelli 3D all'interno della scena.
+
+Di seguito è mostrato un esempio di struttura:
+\begin{minted}[frame=single]{json}
+{
+	"openings": [
+	{
+		"type": "DOOR",
+		"center": [12.5, 0.0, 3.2],
+		"width": 0.9,
+		"height": 2.1,
+		"thickness": 0.1,
+		"rotation": 90.0
+	},
+	{
+		"type": "WINDOW",
+		"center": [8.3, 0.0, 1.5],
+		"width": 1.2,
+		"height": 1.4,
+		"thickness": 0.1,
+		"rotation": 0.0
+	}]
+}
+\end{minted}

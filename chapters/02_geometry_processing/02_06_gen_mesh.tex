@@ -1,0 +1,67 @@
+\section{Triangolazione ed estrusione}
+\label{sec:gen_mesh}
+
+Per ottenere i vertici e gli indici necessari per costruire la mesh, dobbiamo eseguire delle triangolazioni sulle facce. A tale scopo si utilizza l'algoritmo \emph{Constrained Delaunay Triangulation}: presa in input una faccia sotto forma di poligono chiuso, restituisce un vettore di triangoli che la ricoprono. Ogni triangolo è rappresentato da 3 vertici, e per ogni vertice vengono calcolati posizione, normale e coordinate di texture. 
+\begin{minted}[frame=single]{cpp}
+struct Vertex
+{
+  glm::vec3 position;
+  glm::vec3 normal;
+  glm::vec2 text_coord;
+};
+\end{minted}
+
+Il concetto di estrusione è molto semplice: dato un poligono (una faccia) 2D, lo si vuole trasformare in un poligono 3D. Il procedimento consiste nel generare gli stessi vertici a un'altezza diversa: per ogni lato della faccia, si considerano i due vertici ad altezza $y_0$, si duplicano traslandoli alla nuova altezza $y_1$, e si utilizzano i quattro vertici così ottenuti per creare un quad verticale.
+
+Un quad ha sempre 4 vertici: \emph{Bottom-Left} (BL), \emph{Bottom-Right} (BR), \emph{Top-Left} (TL) e \emph{Top-Right} (TR), di conseguenza un quad viene suddiviso in 2 triangoli. Per ciascun vertice del quad si calcola inoltre il vettore normale, perpendicolare alla superficie del quad stesso: l'ordine con cui i vertici vengono collegati per formare i triangoli (\emph{winding order}) determina il verso della normale. Percorrendo i vertici in senso antiorario (\emph{counter-clockwise}, CCW) si ottiene una normale rivolta verso l'esterno, mentre percorrendoli in senso orario (\emph{clockwise}, CW) la normale risulta rivolta verso l'interno; è quindi fondamentale prestare attenzione all'ordine dei vertici in fase di costruzione, per ottenere in ciascun caso il verso desiderato.
+
+Le operazioni di triangolazione ed estrusione vengono applicate in modi diversi a seconda del tipo di faccia (pavimento, soffitto, muro, porta o finestra). È importante notare che, fino a questo punto, si è lavorato su poligoni 2D, con le facce iniziali poste ad altezza $0$; da queste è ora necessario ricavare i corrispondenti poligoni 3D, ottenuti estrudendo le facce fino all'altezza del soffitto $h$.
+
+\subsection{Pavimento e soffitto}
+\label{subsec:floor_ceiling}
+
+Una prima ipotesi naturale sarebbe rappresentare il pavimento tramite le facce classificate come \texttt{FLOOR}. Questo approccio, tuttavia, non è il più robusto: esistono modelli CAD dove non è presente la porta d'ingresso di una stanza o di un appartamento, lasciando l'ambiente aperto verso l'esterno. In questi casi la faccia \texttt{FLOOR} non esiste come entità separata, poiché viene inglobata nella cosiddetta \emph{unbounded face} (la faccia esterna e illimitata generata automaticamente da CGAL per rappresentare tutto ciò che si trova al di fuori della geometria arrangiata).
+
+L'approccio più robusto consiste quindi nel calcolare il bounding box dell'intera geometria e nel creare una singola faccia corrispondente a tale rettangolo. Il soffitto è ottenuto dalla stessa faccia, traslata all'altezza $h$ e con normale invertita (rivolta verso il basso).
+\begin{minted}[frame=single]{cpp}
+floor_face->triangulate(0.f);
+floor_face->triangulate(ceil_height);
+\end{minted}
+
+\subsection{Muri}
+\label{subsec:walls}
+
+Per i muri sarebbe in linea di principio possibile triangolare sia la faccia inferiore (ad altezza pavimento) sia la faccia superiore, traslata all'altezza del soffitto $h$. Questo, tuttavia, risulterebbe uno spreco: le facce di pavimento e soffitto, calcolate come descritto sopra, già chiudono la geometria superiormente e inferiormente. È quindi sufficiente estrudere le facce dei muri, senza ulteriori triangolazioni.
+\begin{minted}[frame=single]{cpp}
+for(const auto& face : wall_faces)
+  face.extrude(0.f, ceil_height);
+\end{minted}
+
+
+\subsection{Porte}
+\label{subsec:doors}
+
+Una porta viene rappresentata come muro pieno a partire dall'altezza dello stipite $s$ fino al soffitto, ad altezza $h$; al di sotto dello stipite l'apertura resta libera. A differenza dei muri, in questo caso è necessario triangolare la faccia orizzontale posta all'altezza dello stipite $s$, poiché non esiste alcuna faccia di pavimento o soffitto che la copra a quella quota. La faccia ad altezza $h$, invece, non va triangolata: quella porzione è già coperta dalla faccia del soffitto. È quindi necessario sia triangolare che estrudere.
+\begin{minted}[frame=single]{cpp}
+for(const auto& face : door_faces)
+{
+  face.triangulate(door_height);
+  face.extrude(door_height, ceil_height);
+}
+\end{minted}
+
+
+\subsection{Finestre}
+\label{subsec:windows}
+
+La finestra è rappresentata come un'apertura al centro del muro: si distinguono quindi una porzione di muro inferiore, dal pavimento fino al davanzale (\texttt{window\_sill}), e una porzione di muro superiore, dall'architrave (\texttt{window\_height}) fino al soffitto. Entrambe le porzioni richiedono una triangolazione e un'estrusione: la prima triangolata al davanzale ed estrusa dal pavimento fino a quella quota, la seconda triangolata all'architrave ed estrusa fino al soffitto.
+\begin{minted}[frame=single]{cpp}
+for(const auto& face : window_faces)
+{
+  face.triangulate(window_sill);
+  face.extrude(0.0f, window_sill);
+	
+  face.triangulate(window_height);
+  face.extrude(window_height, ceil_height);
+}
+\end{minted}

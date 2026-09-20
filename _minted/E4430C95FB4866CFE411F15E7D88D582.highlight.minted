@@ -4,10 +4,10 @@
 \PYG{k}{public}\PYG{o}{:}
 \PYG{+w}{  }\PYG{n}{SpatialHash}\PYG{p}{(}\PYG{n}{f64}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1e\PYGZhy{}4}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{:}
 \PYG{+w}{  }\PYG{n}{m\PYGZus{}epsilon}\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{m\PYGZus{}epsilon\PYGZus{}sq}\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{epsilon}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}\PYGZcb{}}
-\PYG{+w}{	}
+
 \PYG{+w}{  }\PYG{n}{VertexId}\PYG{+w}{ }\PYG{n}{snap}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{);}
 \PYG{+w}{  }\PYG{n}{VertexId}\PYG{+w}{ }\PYG{n+nf}{find\PYGZus{}nearest}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{const}\PYG{p}{;}
-\PYG{+w}{	}
+
 \PYG{k}{private}\PYG{o}{:}
 \PYG{+w}{  }\PYG{n}{CellCoord}\PYG{+w}{ }\PYG{n}{get\PYGZus{}cell}\PYG{p}{(}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{);}
 

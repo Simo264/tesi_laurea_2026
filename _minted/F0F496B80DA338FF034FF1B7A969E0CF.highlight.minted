@@ -1,0 +1,8 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{class}\PYG{+w}{ }\PYG{n+nc}{Face}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{glm}\PYG{o}{::}\PYG{n}{dvec2}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{vertices}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{std}\PYG{o}{::}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{SegmentLayer}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{edge\PYGZus{}layers}\PYG{p}{;}
+\PYG{+w}{  }\PYG{n}{FaceType}\PYG{+w}{ }\PYG{n}{type}\PYG{p}{;}
+\PYG{p}{\PYGZcb{};}
+\end{MintedVerbatim}

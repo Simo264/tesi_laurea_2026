@@ -1,0 +1,7 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{for}\PYG{p}{(}\PYG{k}{const}\PYG{+w}{ }\PYG{k}{auto}\PYG{o}{\PYGZam{}}\PYG{+w}{ }\PYG{n}{face}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{door\PYGZus{}faces}\PYG{p}{)}
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{  }\PYG{n}{face}\PYG{p}{.}\PYG{n}{triangulate}\PYG{p}{(}\PYG{n}{door\PYGZus{}height}\PYG{p}{);}
+\PYG{+w}{  }\PYG{n}{face}\PYG{p}{.}\PYG{n}{extrude}\PYG{p}{(}\PYG{n}{door\PYGZus{}height}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{ceil\PYGZus{}height}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}

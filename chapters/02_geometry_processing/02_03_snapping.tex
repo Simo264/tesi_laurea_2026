@@ -26,12 +26,12 @@ La classe che implementa questa struttura si presenta come segue:
 class SpatialHash
 {
 public:
-  SpatialHash(f64 epsilon = 1e-4) : 
+  SpatialHash(f64 epsilon = 1e-4) :
   m_epsilon{ epsilon}, m_epsilon_sq{ epsilon * epsilon } {}
-	
+
   VertexId snap(glm::dvec2 p);
   VertexId find_nearest(glm::dvec2 p) const;
-	
+
 private:
   CellCoord get_cell(glm::dvec2 p);
 
@@ -49,7 +49,7 @@ Il parametro $\epsilon$ definisce sia la dimensione della cella sia la tolleranz
 	\item se non lo trova, crea un nuovo vertice, lo memorizza nella griglia e ne restituisce il nuovo \texttt{VertexId}.
 \end{itemize}
 
-Il metodo \texttt{find\_nearest()}, invece, restituisce l'ID del vertice più vicino al punto $p$ all'interno dell'intero hash. Questo metodo verrà utilizzato nella fase di ricostruzione dei varchi (Sezione~\ref{sec:gaps_reconstruction}) per individuare i vertici dei muri più vicini ai segmenti di porte e finestre.
+Il metodo \texttt{find\_nearest()}, invece, restituisce l'ID del vertice più vicino al punto $p$ all'interno dell'intero hash. Questo metodo ci servirà più avanti quando dovremo ricostruire le fessure dei muri.
 
 In questo esempio, con $\epsilon = 0.01$, il numero di vertici sui segmenti dei muri si riduce da 177 a 88, ovvero una riduzione di circa il 50\%.
 

@@ -1,0 +1,21 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{p}{\PYGZob{}}
+\PYG{+w}{	}\PYG{n+nt}{\PYGZdq{}openings\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{p}{[}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}DOOR\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}center\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{12.5}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{0.0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{3.2}\PYG{p}{],}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}width\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{0.9}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}height\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{2.1}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}thickness\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{0.1}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}rotation\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{90.0}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{},}
+\PYG{+w}{	}\PYG{p}{\PYGZob{}}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}type\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}WINDOW\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}center\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{p}{[}\PYG{l+m+mf}{8.3}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{0.0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{],}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}width\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{1.2}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}height\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{1.4}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}thickness\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{0.1}\PYG{p}{,}
+\PYG{+w}{		}\PYG{n+nt}{\PYGZdq{}rotation\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+\PYG{+w}{	}\PYG{p}{\PYGZcb{}]}
+\PYG{p}{\PYGZcb{}}
+\end{MintedVerbatim}
