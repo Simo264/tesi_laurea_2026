@@ -1,43 +1,78 @@
-% To automatically get the entry for an article, follow these steps:
-% 1. Open Google Scholar's website and find the article 
-% 2. Find the "Cite" / "Cita" button
-% 3. On the popup windows, press "BibTeX"
-% 4. Copy and paste the text 
+% =========================================
+% Spatial Hash
+% =========================================
 
-@misc{adobe_dwg_dxf,
-	title = {DWG vs DXF: differenze e confronto},
-	url   = {https://www.adobe.com/creativecloud/file-types/image/comparison/dwg-vs-dxf.html},
+@misc{autoware_spatial_hash,
+	title        = {Spatial Hash},
+	author       = {{Autoware Foundation}},
+	howpublished = {\url{https://autowarefoundation.github.io/autoware.universe/main/common/autoware_utils/design/spatial-hash-design/}},
 }
 
-@misc{libdxfrw,
-	author       = {{Codelibs}},
-	title        = {libdxfrw: A C++ library to read/write DXF files},
-	url  		 = {https://github.com/Codelibs/libdxfrw},
+@misc{tollander2020celllists,
+	author       = {Tollander de Balsch, Jaan},
+	title        = {Searching for Fixed-Radius Near Neighbors with Cell Lists Algorithm in Julia Language},
+	year         = {2020},
+	howpublished = {\url{https://jaantollander.com/post/searching-for-fixed-radius-near-neighbors-with-cell-lists-algorithm-in-julia-language/}},
 }
 
-@InProceedings{ester1996dbscan,
-	title     = {A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise},
+% =========================================
+% DBSCAN Clustering Algorithm
+% =========================================
+
+@inproceedings{ester1996dbscan,
 	author    = {Ester, Martin and Kriegel, Hans-Peter and Sander, J{\"o}rg and Xu, Xiaowei},
+	title     = {A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise},
 	booktitle = {Proceedings of the 2nd International Conference on Knowledge Discovery and Data Mining (KDD-96)},
+	pages     = {226--231},
 	year      = {1996},
-	publisher = {AAAI Press},
+	publisher = {AAAI Press}
 }
 
-@online{yin2024halfedge,
-	author       = {Jerry Y},
-	title        = {Half-Edge Data Structure},
-	url          = {https://jerryyin.info/geometry-processing-algorithms/half-edge/},
+@misc{builtin_dbscan,
+	author       = {Yenig{\"u}n, Okan},
+	title        = {DBSCAN Clustering Algorithm Demystified},
+	year         = {2024},
+	howpublished = {\url{https://builtin.com/articles/dbscan}},
 }
 
-@online{uiuc2024halfedge,
-	author       = {{UIUC CS418}},
-	title        = {Half-Edge Data Structure},
-	howpublished = {University of Illinois at Urbana-Champaign},
-	url          = {https://cs418.cs.illinois.edu/website/text/halfedge.html},
+@misc{sklearn_dbscan,
+	author       = {{scikit-learn developers}},
+	title        = {sklearn.cluster.DBSCAN},
+	howpublished = {\url{https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html}},
 }
 
-@misc{CGAL,
-	key   = "CGAL",
-	title = "{CGAL}, Computational Geometry Algorithms Library",
-	url   = {https://www.cgal.org}
+% =========================================
+% Mesh definition
+% =========================================
+
+@book{marschner2021fcg,
+	author    = {Marschner, Steve and Shirley, Peter},
+	title     = {Fundamentals of Computer Graphics},
+	edition   = {5},
+	year      = {2021},
+	publisher = {CRC Press}
+}
+
+% =========================================
+% Triangulation
+% =========================================
+
+
+@misc{eberly2002triangulation,
+	author       = {Eberly, David},
+	title        = {Triangulation by Ear Clipping},
+	howpublished = {Geometric Tools, Redmond WA 98052},
+	year         = {2002},
+	note         = {Ultima modifica: 3 agosto 2024},
+	url          = {https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf}
+}
+
+
+@misc{lucas2016delaunay,
+	author       = {Lucas, Gary W.},
+	title        = {An Introduction to the Delaunay Triangulation},
+	howpublished = {TinfourDocs, Tinfour Project},
+	month        = {November},
+	year         = {2016},
+	url          = {https://gwlucastrig.github.io/TinfourDocs/DelaunayIntro/},
 }

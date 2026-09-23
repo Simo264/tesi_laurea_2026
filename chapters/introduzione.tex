@@ -1,0 +1,76 @@
+\chapter{Introduzione}
+\label{ch:1_introduzione}
+
+L'obiettivo del presente lavoro di tesi è quello di sviluppare un sistema in grado di generare automaticamente una mesh 3D partendo da un modello CAD 2D di una planimetria di una singola stanza o di un appartamento. Per ogni modello CAD 2D che verrà letto in input dal sistema il risultato sarà una mesh 3D con vertici, indici, normali e coordinate di texture che possono essere immediatamente utilizzate per il rendering.
+
+% ========================================================================
+% 1.1 Il dominio del problema
+% ========================================================================
+
+\section{Il dominio del problema}
+\label{sec:dominio_del_problema}
+
+Il dominio del problema comprende i piani architettonici CAD 2D in formato DXF (Drawing Exchange Format). Mentre DWG e DXF sono standard de facto nel campo del CAD, sono diversi tra loro per quanto riguarda l'approccio alla codifica: DWG è un formato binario proprietario, più efficiente nello spazio ma meno leggibile in quanto può essere letto da poche applicazioni, mentre DXF è un formato basato sul testo (in ASCII) sviluppato in modo tale da non presentare problemi di interoperabilità con i software di terzi.
+
+Per poter iniziare a lavorare sulla progettazione della pipeline di elaborazione è stato prima necessario raccogliere un dataset composto da modelli CAD 2D rappresentativi del dominio di applicazione: più di dieci modelli CAD sono stati raccolti da diversi siti web come \texttt{draftsperson.net}, \texttt{pincad.com} e \texttt{archweb.com}. Questi modelli erano inizialmente disponibili nel formato DWG e sono stati quindi convertiti in formato DXF e controllati con un software di editing come LibreCAD. Tra i modelli disponibili ne sono stati selezionati alcuni come studi di caso, utilizzati nel corso della tesi per illustrare le diverse fasi della pipeline.
+
+% ========================================================================
+% 1.2 I problemi dei modelli CAD
+% ========================================================================
+
+\section{I problemi dei modelli CAD}
+\label{sec:problemi_modelli_CAD}
+
+
+Il formato DXF non fornisce direttamente poligoni, bensì un insieme di entità geometriche disconnesse tra loro, quali \texttt{POLYLINE}, \texttt{LINE}, \texttt{ARC} ecc., organizzate in layer e blocchi. È qui che emerge la prima criticità: non esiste alcuno standard che imponga una convenzione univoca sui nomi dei layer o dei blocchi. Un architetto può decidere di nominare i layer in un certo modo, e un altro architetto in un modo diverso. Questo vale anche per i blocchi, che molto spesso presentano nomi privi di significato.
+
+Un secondo problema riguarda la rappresentazione geometrica degli elementi. Per quanto riguarda i muri, ad esempio, un architetto può rappresentarle con un semplice contorno privo di spessore, mentre un altro le disegna con uno spessore definito. Alcuni utilizzano polilinee che definiscono contorni già chiusi, altri invece semplici segmenti che spesso si intersecano impropriamente tra loro e risultano aperti, facendo apparire la geometria come "rotta".
+
+Non solo i muri, ma anche le finestre presentano una notevole variabilità: alcuni architetti le descrivono come blocchi complessi composti da centinaia di segmenti, altri come semplici segmenti che collegano due pareti, altri ancora come rettangoli definiti da quattro lati, con ulteriori segmenti interni per rappresentare il vetro.
+
+Le porte, invece, tendono a essere rappresentate in modo più uniforme tra i vari modelli, tipicamente tramite archi; in alcuni modelli, tuttavia, in particolare per le porte d'ingresso, possono essere rappresentate tramite polilinee o segmenti anziché tramite un arco.
+
+Questa eterogeneità è la ragione principale per cui non è possibile progettare un algoritmo generale in grado di elaborare correttamente qualsiasi modello CAD. È necessaria, a monte, una fase di preprocessing volta a rendere il modello quanto più consistente possibile (Sezione \ref{sec:preprocessing} del Capitolo \ref{ch:pipeline}).
+
+
+% ========================================================================
+% 1.3 Obiettivi della tesi
+% ========================================================================
+
+\section{Obiettivi della tesi}
+\label{sec:obiettivi_e_struttura_tesi}
+
+Il presente lavoro si pone i seguenti obiettivi: 
+
+\begin{itemize}
+	\item progettare un parser in grado di interpretare in modo robusto le entità geometriche eterogenee presenti in un file DXF (segmenti, polilinee, archi, blocchi), riconducendole a un insieme coerente di muri, porte e finestre;
+	\item ricostruire la topologia della planimetria a partire da primitive geometriche, unificando i vertici duplicati e ricostruendo correttamente i varchi sui muri;
+	\item generare una mesh 3D completa di normali e coordinate texture, distinguendo pavimento, soffitto, muri, porte e finestre;
+	\item esportare il modello in formato GLTF pronto per essere importato in Blender, così da effettuare un rendering fotorealistico della scena.
+\end{itemize}
+
+% ========================================================================
+% 1.4 Struttura della tesi
+% ========================================================================
+
+\section{Struttura della tesi}
+\label{sec:struttura_della_tesi}
+
+Il resto della tesi è organizzato come segue.
+
+Il Capitolo \ref{ch:background_teorico} introduce le nozioni di geometria computazionale necessarie per comprendere le scelte progettuali descritte nei capitoli successivi: strutture dati spaziali, algoritmi di clustering di punti, grafi planari, tecniche di triangolazione di poligoni e rappresentazione di mesh 3D (in particolare normali e coordinate texture).
+
+Il Capitolo \ref{ch:pipeline} descrive la progettazione e l'implementazione della pipeline, dalle assunzioni progettuali fino a ciascuna delle fasi che la compongono: preprocessing, parsing, collasso dei vertici, ricostruzione dei varchi, estrazione e classificazione delle facce, triangolazione ed estrusione, esportazione.
+
+Il Capitolo \ref{ch:rendering} conclude il lavoro descrivendo la fase di rendering: generazione della scena in Blender e setup dei materiali, delle luci, della camera e del motore Cycles.
+
+
+%\section{Assunzioni progettuali}
+%\label{sec:assunzioni_progettuali}
+%
+%Per affrontare queste criticità vengono fatte delle assunzioni ragionevoli, che consentono di semplificare il problema:
+%\begin{enumerate}
+%	\item i layer e i blocchi relativi a pareti, porte e finestre devono avere nomi riconoscibili (ad esempio \texttt{A-WALL}, \texttt{A-DOOR}, \texttt{A-WINDOW}, \texttt{BLOCK-WINDOW}, \texttt{BLOCK-DOOR})
+%	\item i muri devono essere rappresentati come facce chiuse (poligoni), dotate di proprio spessore; eventuali \emph{crack} o discontinuità nei contorni devono essere riparate manualmente prima dell'esecuzione mediante software di editing CAD (come LibreCAD);
+%	\item le porte e finestre sono considerati buchi, o discontinuità,  nelle pareti e verranno trattati come tali durante la fase di estrusione, con altezze differenziate
+%\end{enumerate}

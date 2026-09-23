@@ -34,3 +34,5 @@
 .idea/
 .DS_Store
 Thumbs.db
+_minted/
+.zed/

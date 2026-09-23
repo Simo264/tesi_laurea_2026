@@ -6,7 +6,7 @@
 Consideriamo il caso più semplice, ovvero le porte. L'obiettivo è prendere i soli segmenti relativi alle porte e ricostruire, per ciascuno di essi, la faccia chiusa corrispondente, sfruttando la struttura spaziale e la lista degli archi (\texttt{edge}) costruite nella fase precedente.
 
 Ricordiamo che la procedura di snapping è stata eseguita esclusivamente sui segmenti dei muri: al suo termine abbiamo quindi a disposizione l'hash spaziale e una lista di archi, dove ogni arco è rappresentato da due indici di vertice e da un tag che ne descrive il tipo (\texttt{WALL}/\texttt{DOOR}/\texttt{WINDOW}). A questo punto, sia i vertici presenti nell'hash sia gli archi della lista appartengono esclusivamente ai muri:
-\begin{minted}[frame=single]{cpp} 
+\begin{minted}[frame=single]{cpp}
 struct Edge
 {
   VertexId v1, v2;
@@ -57,8 +57,6 @@ Alla fine, ignorando per il momento le finestre, il procedimento di ricostruzion
 \end{figure}
 
 
-
-
 \subsection{Ricostruzione finestre}
 \label{subsec:windows}
 
@@ -85,5 +83,3 @@ Dopo aver calcolato i bounding box e ricavato i relativi segmenti, è possibile 
 \end{figure}
 
 Il risultato di questa fase è un grafo completo di muri, porte e finestre, pronto per essere utilizzato nella costruzione del \emph{Planar Straight-Line Graph} e nell'estrazione delle facce.
-
-

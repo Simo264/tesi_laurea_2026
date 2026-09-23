@@ -12,18 +12,18 @@
 \ifoot[]{}
 \cfoot[]{}
 \ofoot[\pagemark]{\pagemark}
-\pagestyle{scrplain} 
+\pagestyle{scrplain}
 \usepackage[hidelinks]{hyperref} % pacchetto per l'utilizzo dei link
 \usepackage[T1]{fontenc}
 \usepackage{inconsolata}
 \usepackage{newtxtext,newtxmath} % font Times New Roman (simile)
 \usepackage{csquotes} % per le citazioni "in blocco"
-\usepackage{booktabs}    
-\usepackage{adjustbox}  
+\usepackage{booktabs}
+\usepackage{adjustbox}
 \usepackage{filehook}
-\usepackage{makecell}    
+\usepackage{makecell}
 \usepackage[bottom]{footmisc}
-\usepackage{pifont}  
+\usepackage{pifont}
 \usepackage[utf8]{inputenc}
 \usepackage{subcaption} % per le sottofigure
 \usepackage[backend=bibtex]{biblatex} % bibliografia con pacchetto biblatex
@@ -144,11 +144,11 @@
 
 \begin{document}
     \begin{titlepage}
-    
+
         \begin{center}
-            \includegraphics[width=8cm]{images/unimore/Sigillo2015.png}
+            \includegraphics[width=8cm]{figures/unimore/Sigillo2015.png}
             \vspace{1cm}
-    
+
             {\LARGE{ UNIVERSITÀ DEGLI STUDI DI MODENA \\E REGGIO EMILIA \\}}
             {\large{ Dipartimento di Scienze Fisiche, Informatiche e Matematiche \\}}
             {\large{ Corso di Laurea Magistrale in Informatica (LM-18) \\}}
@@ -156,18 +156,18 @@
             {\Large { \textbf{Implementazione di una pipeline per la generazione di mesh 3D a partire da modelli CAD 2D di planimetrie architettoniche} }}\\
             \vspace{3cm}
         \end{center}
-        
+
         \begin{minipage}[t]{0.47\textwidth}
-        	{\large{\bf Relatore:}\\} 
+        	{\large{\bf Relatore:}\\}
             {\large Prof. Nicola Capodieci\\}
-            {\large{\bf Correlatore:}\\} 
+            {\large{\bf Correlatore:}\\}
             {\large Prof. Fabio Pellacini\\}
         \end{minipage}\hfill\begin{minipage}[t]{0.47\textwidth}\raggedleft
         	{\large{\bf Candidato:}\\}
             {\large Simone Vaiasinni}\\
             {\large Matricola 201711}
         \end{minipage}
-        
+
         \vfill
         \hrulefill\\
         \centering{\large{\bf ANNO ACCADEMICO 2025/2026 }}
@@ -178,43 +178,42 @@
     \null
     \newpage
     \pagestyle{empty}
-    \input{chapters/00_abstract} 
+    \input{chapters/abstract}
     \clearpage
-    
+
     \pagestyle{empty}
     \clearpage
-    
+
     \tableofcontents      % Generates the Table of Contents
-    \renewcommand{\listfigurename}{Elenco delle Figure}
-    \listoffigures        % Generates the List of Figures
-    \renewcommand{\lstlistingname}{Code}
-    \renewcommand{\lstlistlistingname}{Elenco dei Codici}
+    %\renewcommand{\listfigurename}{Elenco delle Figure}
+    %\listoffigures        % Generates the List of Figures
+    %\renewcommand{\lstlistingname}{Code}
+    %\renewcommand{\lstlistlistingname}{Elenco dei Codici}
 
     \lstlistoflistings    % Generates the List of Code Listings
-    
+
     \clearpage
     \pagestyle{scrplain} % Restores the normal page style (with page number)
     \setcounter{page}{1} % Restart page numbering from 1
     \pagenumbering{arabic}
+
     % Add chapters here
-    \input{chapters/01_introduzione.tex}
+    \input{chapters/introduzione.tex}
 
-    \include{chapters/02_geometry_processing/02_geometry_processing}
-    
-    \include{chapters/03_rendering/03_rendering}
-    
-    \input{chapters/04_risultati.tex}
-    
-    \input{chapters/05_conclusioni.tex}
+    \include{chapters/2_background_teorico/main}
+    %\include{chapters/3_progettazione_pipeline/main}
+    %\include{chapters/4_rendering/main}
 
-    \input{chapters/99_acknowledgements}
-    
-    \clearpage 
-    
+    \input{chapters/risultati.tex}
+    \input{chapters/conclusioni.tex}
+    \input{chapters/acknowledgements}
+
+    \clearpage
+
     \addcontentsline{toc}{chapter}{Riferimenti}
-    
+
     \printbibliography[heading=subbibliography, title=Bibliografia]
 
     \nocite{*}
-   
+
 \end{document}
