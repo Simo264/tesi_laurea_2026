@@ -3,7 +3,7 @@
 
 La maggior parte dei modelli 3D utilizzati in applicazioni reali è composta da complessi di triangoli con vertici condivisi, comunemente detti \emph{mesh triangolari}; gestire questa struttura in modo efficiente è determinante per le prestazioni di un programma grafico, sia in termini di occupazione di memoria su disco che a runtime \cite{marschner2021fcg}. Una mesh triangolare non è un insieme di triangoli tra loro indipendenti, ma una rete di triangoli connessi tramite vertici e archi condivisi a formare un'unica superficie continua: è proprio questa connettività condivisa, e non la semplice somma dei singoli triangoli, a permettere di rappresentare ed elaborare la mesh in modo più efficiente rispetto a una collezione di triangoli scorrelati.
 
-L'informazione minima necessaria per definire una mesh triangolare è l'insieme dei triangoli, ciascuno espresso come tripla di vertici, e la posizione nello spazio di ciascun vertice. La quasi totalità delle applicazioni pratiche, tuttavia, richiede di associare ai vertici (o, a seconda dei casi, agli archi o alle facce) dati aggiuntivi necessari per operazioni come il texture mapping, lo shading o l'animazione. I dati associati ai vertici sono i più comuni: a ciascun vertice possono essere associati parametri di materiale, coordinate texture, o qualunque altra grandezza il cui valore vari con continuità lungo la superficie; tali valori vengono poi interpolati linearmente all'interno di ciascun triangolo, ottenendo così una funzione continua definita sull'intera superficie della mesh.
+L'informazione minima necessaria per definire una mesh triangolare è l'insieme dei triangoli, ciascuno espresso come tripla di vertici, e la posizione nello spazio di ciascun vertice. La quasi totalità delle applicazioni pratiche, tuttavia, richiede di associare ai vertici dati aggiuntivi necessari per operazioni come il texture mapping, lo shading o l'animazione. I dati associati ai vertici sono i più comuni: a ciascun vertice possono essere associati parametri di materiale, coordinate texture, o altro; tali valori vengono poi interpolati linearmente all'interno di ciascun triangolo, ottenendo così una funzione continua definita sull'intera superficie della mesh.
 
 
 \subsection{Topologia della mesh}
@@ -21,18 +21,14 @@ I triangoli di una mesh possono essere memorizzati come entità indipendenti, ci
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.75\textwidth]{figures/2_background_teorico/indexed-triangle-mesh.png}
+	\caption{Rappresentazione di una \emph{indexed triangle mesh}: i vertici sono memorizzati una sola volta e ogni triangolo vi fa riferimento tramite indici.}
+	\label{fig:indexed_mesh}
 \end{figure}
 
 \subsection{Grafi planari e Planar Straight-Line Graph}
 \label{subsec:grafi_planari}
 
 Le strutture dati per la connettività discusse nel seguito derivano concettualmente dall'idea di rappresentare una mesh come un grafo: un insieme di vertici e di archi, a cui si aggiunge un insieme di facce definite come cicli ordinati di vertici o archi. Un grafo è detto planare se può essere disegnato su un piano senza che i suoi archi si intersechino al di fuori dei vertici condivisi; è detto planare embedded (o piano) quando tale disposizione è stata effettivamente fissata nello spazio. Quando, in aggiunta, gli archi sono segmenti rettilinei anziché curve generiche, si parla di \textbf{Planar Straight-Line Graph} (PSLG): è la rappresentazione naturale per dati geometrici 2D costituiti da spezzate e poligoni, ed è tipicamente il punto di partenza per operazioni come l'estrazione delle facce racchiuse dal grafo o la sua triangolazione.
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.5\textwidth]{figures/2_background_teorico/planar_non_planar_graphs.png}
-\end{figure}
-
-\newpage
 
 \subsection{Strutture dati per la connettività}
 \label{subsec:strutture_dati_per_la_connettivita}
@@ -43,18 +39,24 @@ Una prima soluzione, relativamente semplice, è la \textbf{Triangle-Neighbor Str
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/2_background_teorico/triangle-neighbor-structure.png}
+	\caption{Rappresentazione della \emph{Triangle-Neighbor Structure}: ogni triangolo referenzia i tre triangoli adiacenti (uno per lato) e ogni vertice referenzia uno dei triangoli incidenti.}
+	\label{fig:triangle_neighbor_structure}
 \end{figure}
 
 Una struttura più flessibile, ampiamente utilizzata, è la \textbf{Winged-Edge}, che memorizza l'informazione di connettività a livello di arco anziché di faccia \cite{marschner2021fcg}. In una mesh Winged-Edge, ogni arco memorizza un riferimento ai due vertici che collega (tipicamente indicati come vertice di testa e di coda), alle due facce di cui è parte (la faccia a sinistra e quella a destra), e, soprattutto, agli archi successivo e precedente nella percorrenza in senso antiorario di ciascuna delle due facce adiacenti. Ogni vertice e ogni faccia memorizza inoltre un riferimento a uno qualsiasi degli archi a esso incidenti. Il nome della struttura deriva dal fatto che l'insieme di questi riferimenti, disposti attorno a un singolo arco, assume graficamente la forma di una farfalla con quattro "ali".
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/2_background_teorico/winged-edge-structure.png}
+	\caption{Rappresentazione della \emph{Winged-Edge Structure}: ogni arco referenzia i due vertici, le due facce adiacenti e gli archi successivo e precedente nella percorrenza di ciascuna faccia, assumendo la caratteristica forma a farfalla.}
+	\label{fig:winged_edge_structure}
 \end{figure}
 
 La struttura Winged-Edge è elegante ma presenta un inconveniente pratico: per spostarsi da un arco al successivo è necessario verificare costantemente da quale lato lo si sta percorrendo, poiché un arco è condiviso da due facce e la sua orientazione dipende dal punto di vista. La struttura \textbf{Half-Edge} (o \emph{doubly-linked edge list}) risolve questo problema suddividendo ciascun arco in due \emph{half-edge} orientati in direzioni opposte, uno per ciascuna delle due facce che condividono l'arco: l'informazione normalmente memorizzata su un singolo arco Winged-Edge viene così distribuita tra i due half-edge, ciascuno coerente con l'orientazione della propria faccia. Ogni half-edge memorizza un riferimento alla faccia sul proprio lato dell'arco, al vertice verso cui punta, al proprio gemello (\emph{twin}, l'half-edge opposto che rappresenta lo stesso arco fisico visto dall'altro lato) e all'half-edge successivo lungo il perimetro della propria faccia. Percorrendo ripetutamente questi riferimenti "successivi" si ottiene un ciclo chiuso corrispondente esattamente al contorno di una faccia, mentre alternando i riferimenti al gemello e al successivo è possibile iterare sugli archi che si dipartono da un dato vertice: proprietà che rende la struttura Half-Edge particolarmente indicata per algoritmi che devono navigare ripetutamente la topologia della mesh, come l'estrazione o la classificazione delle facce racchiuse da un PSLG.
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/2_background_teorico/cgal-halfedge.png}
+	\caption{Rappresentazione della \emph{Half-Edge Structure}: ogni arco è suddiviso in due half-edge opposti, ciascuno con riferimenti alla faccia, al vertice di destinazione, al gemello e all'half-edge successivo.}
+	\label{fig:half_edge_structure}
 \end{figure}
 
 

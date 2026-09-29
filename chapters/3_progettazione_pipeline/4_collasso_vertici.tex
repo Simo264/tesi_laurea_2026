@@ -1,61 +1,87 @@
+\newpage
 \section{Collasso dei vertici}
-\label{sec:snapping}
+\label{sec:collasso_dei_vertici}
 
-A questo punto il parser produce una raccolta di segmenti che non sono collegati tra loro: non abbiamo ancora una rappresentazione globale della geometria.
+Al termine della fase di parsing si dispone di una collezione di primitive (segmenti) indipendenti tra loro. Nei modelli CAD è abbastanza comune che in uno stesso punto siano presenti più vertici sovrapposti, appartenenti a segmenti diversi. È quindi necessario effettuare il collasso dei vertici, comunemente noto come \emph{vertex snapping}. Questa operazione serve sia a ottimizzare la computazione, riducendo il numero di vertici da elaborare, sia a soddisfare il requisito, necessario per le fasi successive, di rappresentare la geometria come un grafo con vertici univoci.
 
-Nei modelli CAD è abbastanza comune che in uno stesso punto siano presenti più vertici sovrapposti, appartenenti a segmenti diversi. Il passo successivo consiste quindi nell'effettuare il collasso dei vertici, comunemente noto come \emph{vertex snapping}. Questa operazione serve sia per ottimizzare la computazione, riducendo il numero di vertici da elaborare, sia perché la geometria dovrà in seguito essere rappresentata come grafo, il che richiede vertici univoci.
+È importante notare che in questa fase vengono considerati solamente i segmenti relativi ai muri: porte e finestre saranno gestite in maniera diversa più avanti (Sezione \ref{sec:ricostruzione_varchi}).
 
-L'obiettivo è quindi prendere l'insieme dei segmenti e produrre una nuova rappresentazione in cui i vertici degli estremi che distano meno di $\epsilon$ l'uno dall'altro vengono collassati in un unico vertice rappresentativo.
-
-Per risolvere questo problema è necessaria una struttura dati spaziale efficiente. Tra le opzioni possibili, come un K-D Tree, si è scelto di utilizzare un \emph{hash spaziale}, concettualmente più semplice da implementare e ben adatto a questo caso d'uso. Un hash spaziale divide lo spazio 2D in una griglia regolare, in cui ogni cella ha dimensione fissa pari a $\epsilon$; a ogni punto viene assegnata esattamente una cella in base alle sue coordinate (x,y). La proprietà chiave di questa struttura è che, se due punti distano meno di $\epsilon$, essi si trovano necessariamente nella stessa cella oppure in una delle celle immediatamente adiacenti. Invece di confrontare ogni nuovo punto con tutti i punti già inseriti (complessità $O(N)$), è quindi sufficiente calcolare la cella di appartenenza del punto e controllare solo le 9 celle vicine (griglia 3$\times$3), riducendo la complessità dell'operazione di snap a un tempo pressoché costante nella pratica.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.5\textwidth]{images/02_geometry_processing/spatial_hash.png}
-	\caption{Spatial Hash}
-	\label{fig:spatial_hash}
-\end{figure}
-
-La dimensione della cella non è arbitraria: se le celle fossero più grandi (ad esempio $2\epsilon$), sarebbe comunque necessario controllare una griglia 3$\times$3, ma con un numero maggiore di punti per cella da confrontare. Se invece fossero più piccole (ad esempio $\epsilon / 2$), sarebbe necessario estendere la ricerca a una griglia 5$\times$5 (25 celle) per coprire correttamente il raggio $\epsilon$. Per questo motivo, mantenere la dimensione della cella esattamente pari a $\epsilon$ e limitare la ricerca alla griglia 3$\times$3 rappresenta il miglior compromesso tra memoria e velocità.
+L'obiettivo è quindi prendere l'insieme dei segmenti e produrre una nuova rappresentazione in cui i vertici estremi che distano meno di $\epsilon$ l'uno dall'altro vengono collassati in un unico vertice rappresentativo. Per risolvere questo problema è necessaria una struttura dati spaziale efficiente; si è scelto di utilizzare un \emph{hash spaziale}, discusso in dettaglio nella Sezione \ref{sec:strutture_dati_spaziali}.
 
 In questa fase è fondamentale tarare in modo adeguato il parametro $\epsilon$: un valore troppo grande rischia di collassare erroneamente vertici distinti (ad esempio due angoli ravvicinati ma geometricamente reali), mentre un valore troppo piccolo lascia vertici duplicati che possono compromettere la costruzione del grafo nella fase successiva.
 
-\newpage
-La classe che implementa questa struttura si presenta come segue:
-\begin{minted}[frame=single]{cpp}
-class SpatialHash
-{
-public:
-  SpatialHash(f64 epsilon = 1e-4) :
-  m_epsilon{ epsilon}, m_epsilon_sq{ epsilon * epsilon } {}
-
-  VertexId snap(glm::dvec2 p);
-  VertexId find_nearest(glm::dvec2 p) const;
-
-private:
-  CellCoord get_cell(glm::dvec2 p);
-
-  f64 m_epsilon, m_epsilon_sq;
-
-  std::unordered_map<CellCoord, std::vector<VertexId>, CellCoordHash> m_grid;
-  std::vector<glm::dvec2> m_vertices;
-};
-\end{minted}
-
-Il parametro $\epsilon$ definisce sia la dimensione della cella sia la tolleranza massima per il merging dei vertici. Il metodo principale è \texttt{snap()}, che:
-\begin{itemize}
-	\item prende un punto $p$ e cerca nella griglia $3\times 3$ un vertice già esistente che disti meno di $\epsilon$;
-	\item se lo trova, restituisce il \texttt{VertexId} del vertice esistente (il nuovo punto viene collassato su di esso e scartato);
-	\item se non lo trova, crea un nuovo vertice, lo memorizza nella griglia e ne restituisce il nuovo \texttt{VertexId}.
-\end{itemize}
-
-Il metodo \texttt{find\_nearest()}, invece, restituisce l'ID del vertice più vicino al punto $p$ all'interno dell'intero hash. Questo metodo ci servirà più avanti quando dovremo ricostruire le fessure dei muri.
-
-In questo esempio, con $\epsilon = 0.01$, il numero di vertici sui segmenti dei muri si riduce da 177 a 88, ovvero una riduzione di circa il 50\%.
-
-\begin{figure}[htbp]
+La classe che implementa questa struttura è mostrata nella Figura~\ref{fig:spatialhash-uml}:
+\begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth]{images/02_geometry_processing/snapping.png}
-	\caption{Entrambi i grafici sono identici. Il secondo contiene la metà dei vertici}
-	\label{fig:snapping}
+	\begin{tikzpicture}
+		\begin{class}[text width=9cm]{SpatialHash}{0,0}
+			\attribute{- epsilon : Real}
+			\attribute{- epsilonSq : Real}
+			\attribute{- grid : Map<CellCoord, VertexId [*]>}
+			\attribute{- vertices : Point [*]}
+			\operation{+ SpatialHash(epsilon : Real = 10\^{-4})}
+			\operation{+ snap(p : Point) : VertexId}
+			\operation{+ findNearest(p : Point) : VertexId}
+			\operation{- getCell(p : Point) : CellCoord}
+		\end{class}
+		
+		\begin{class}[text width=3.5cm]{CellCoord}{-7,-8}
+			\attribute{+ x : Integer}
+			\attribute{+ y : Integer}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{VertexId}{7,-8}
+			\attribute{+ value : Integer}
+		\end{class}
+	\end{tikzpicture}
+	\caption{Diagramma UML della classe \texttt{SpatialHash}, che implementa la struttura dati spaziale usata per il collasso dei vertici.}
+	\label{fig:spatialhash-uml}
 \end{figure}
+
+Il parametro $\epsilon$ definisce il raggio di ricerca $r$ e, di conseguenza, la dimensione della cella della griglia (Sezione \ref{subsec:hash_spaziale_teoria}). Il metodo principale è \texttt{snap()}: dato un punto $p$, cerca nella griglia $3 \times 3$ circostante un vertice già esistente che disti meno di $\epsilon$; se lo trova, restituisce l'id (\texttt{VertexId}) del vertice esistente, sul quale il nuovo punto viene collassato senza essere inserito nella griglia; in caso contrario, il punto viene inserito come nuovo vertice e ne viene restituito l'id appena assegnato.
+
+Il metodo \texttt{find\_nearest()} restituisce invece l'id del vertice più vicino a $p$ all'interno dell'intero hash, indipendentemente dalla distanza; questo metodo verrà utilizzato più avanti nella ricostruzione dei varchi (Sezione \ref{sec:ricostruzione_varchi}).
+
+Utilizzando $\epsilon = 10^{-2}$, il numero di vertici sui segmenti dei muri del caso di studio si riduce da 177 a 88, ovvero una riduzione di circa il 50\%. Riducendo ulteriormente il valore di $\epsilon$, la riduzione ottenuta non varia in modo significativo, a conferma che il valore scelto è già sufficiente a collassare correttamente tutti i vertici duplicati presenti nel modello.
+
+Un esempio di utilizzo della struttura (Algoritmo~\ref{alg:build_edges}), nella costruzione dell'insieme di archi (\texttt{Edge}) a partire dai segmenti dei muri, è il seguente:
+\begin{algorithm}[htbp]
+	\caption{Costruzione degli archi a partire dai segmenti, con collasso dei vertici}
+	\label{alg:build_edges}
+	\begin{algorithmic}[1]
+		\Require $segmentList$: lista dei segmenti estratti dal parsing
+		\Require $snapEps$: tolleranza $\epsilon$ per il collasso dei vertici
+		\Ensure $edges$: lista degli archi con vertici univoci
+		
+		\State $hash \gets$ \Call{SpatialHash}{$snapEps$}
+		\State $edges \gets \emptyset$
+		
+		\For{\textbf{each} $seg \in segmentList$}
+		\State $v_1 \gets hash.\Call{Snap}{seg.start}$
+		\State $v_2 \gets hash.\Call{Snap}{seg.end}$
+		\If{$v_1 \neq v_2$}
+		\State $edges.\Call{Append}{(v_1, v_2, seg.layer)}$
+		\EndIf
+		\EndFor
+		
+		\State \Return $edges$
+	\end{algorithmic}
+\end{algorithm}
+
+Il controllo \texttt{v1 != v2} evita di introdurre archi degeneri, ovvero archi di lunghezza nulla generati da segmenti i cui due estremi vengono collassati sullo stesso vertice.
+
+La struttura di un arco (\texttt{Edge}) è molto simile alla struttura \texttt{Segment} introdotta nella Sezione \ref{sec:parsing}, con la differenza che, in questo caso, vengono memorizzati solo i riferimenti (id) ai vertici anziché le loro coordinate (Figura~\ref{fig:edge-uml}):
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{class}[text width=5cm]{Edge}{0,0}
+			\attribute{+ v1 : VertexId}
+			\attribute{+ v2 : VertexId}
+			\attribute{+ layer : SegmentLayer}
+		\end{class}
+	\end{tikzpicture}
+	\caption{Diagramma UML della struttura \texttt{Edge}, che rappresenta un lato del grafo con la relativa semantica.}
+	\label{fig:edge-uml}
+\end{figure}
+
+Al termine di questa fase si dispone quindi di un vettore di \texttt{Edge} e di un vettore di vertici univoci.

@@ -1,5 +1,35 @@
 \chapter{Conclusioni}
-%\addcontentsline{toc}{chapter}{Conclusioni}
-\label{ch:conclusions}
+\label{ch:conclusioni}
 
-Qui andrebbero le tue conclusioni.
+\section{Sintesi del lavoro}
+\label{sec:sintesi_lavoro}
+
+Il lavoro presentato in questa tesi ha affrontato il problema della generazione automatica di mesh 3D a partire da planimetrie architettoniche CAD, con l'obiettivo di ridurre l'intervento manuale tipicamente richiesto per ottenere una rappresentazione 3D di una scena a partire dal relativo disegno 2D.
+
+È stata realizzata una pipeline in grado di: interpretare le entità geometriche eterogenee di un file DXF, riconducendole a muri, porte e finestre; ricostruire la topologia della planimetria; generare una mesh 3D triangolata, completa di normali e coordinate texture; ed esportare il risultato in formato GLTF, pronto per essere arricchito ed elaborato in Blender ai fini del rendering fotorealistico.
+
+La validazione su diverse planimetrie reali ha mostrato come la pipeline sia in grado di produrre, in tempi dell'ordine di pochi secondi, una ricostruzione geometrica corretta a fronte di un intervento manuale contenuto e circoscritto alla fase di preprocessing, la cui entità dipende dalla conformità del modello di input alle assunzioni progettuali definite in Sezione \ref{sec:assunzioni_progettuali}.
+
+\section{Limiti}
+\label{sec:limiti}
+
+L'approccio presenta alcuni limiti, in parte intrinseci alla natura del problema affrontato e in parte legati a scelte progettuali specifiche.
+
+\begin{itemize}
+	\item \textbf{Dipendenza dal preprocessing manuale.} La pipeline richiede che il modello di input rispetti dell assunzioni progettuali (Sezione \ref{sec:assunzioni_progettuali}); quando queste non sono soddisfatte, la correzione del modello CAD resta un'operazione manuale.
+	
+	\item \textbf{Sensibilità ai parametri.} La qualità del risultato dipende dalla corretta taratura di alcuni parametri, come l'unità di misura, la tolleranza $\epsilon$ per il collasso dei vertici (Sezione \ref{sec:collasso_dei_vertici}) e i parametri di DBSCAN per il riconoscimento delle finestre (Sezione \ref{sec:ricostruzione_varchi}); tali parametri non sono al momento determinati automaticamente, ma vanno impostati per ciascun modello.
+	
+	\item \textbf{Copertura geometrica limitata.} La pipeline è stata progettata e validata su planimetrie composte da muri rettilinei disposti su un unico piano; geometrie più complesse, come muri curvi o edifici multipiano, non sono attualmente supportate.
+	
+	\item \textbf{Composizione della scena non automatizzata.} Il posizionamento di camera e luci, così come l'eventuale arredamento della scena, sono attualmente operazioni manuali svolte tramite GUI di Blender (Capitolo \ref{ch:rendering}), e non fanno parte della pipeline.
+\end{itemize}
+
+\section{Sviluppi futuri}
+\label{sec:sviluppi_futuri}
+
+I limiti individuati suggeriscono diverse direzioni di sviluppo futuro. Una prima estensione riguarda l'automazione, anche solo parziale, della fase di preprocessing, ad esempio tramite euristiche in grado di individuare e correggere automaticamente contorni aperti o discontinuità nei muri. 
+
+Sul fronte del rendering, il posizionamento della camera e delle luci potrebbe essere automatizzato tramite euristiche basate sulla geometria della stanza (ad esempio posizionando le luci in funzione della posizione delle finestre), così come l'inserimento di arredi selezionati e disposti automaticamente in base al tipo di stanza.
+
+Infine, un'estensione naturale del lavoro riguarda l'ampliamento della copertura geometrica della pipeline, per supportare planimetrie con muri curvi o edifici composti da più piani, oggi esclusi dalle assunzioni progettuali su cui il sistema si basa.

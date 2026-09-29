@@ -5,29 +5,22 @@
     \setlength{\parskip}{0pt}
     {\huge\textit{Abstract}\par}
     \bigskip
-    {\normalsize\bf \ttitle \par}
+    %{\normalsize\bf \ttitle \par}
     \bigskip
   \end{center}
 }
 \makeatother
 
-\newcommand{\ttitle}{Floorplan3D:  implementazione di una pipeline per la generazione di mesh 3D a partire da modelli CAD 2D di planimetrie architettoniche}
+%\newcommand{\ttitle}{Implementazione di una pipeline per la generazione di mesh 3D a partire da modelli CAD 2D di planimetrie architettoniche}
 
 \beginitalianAbstract
 \addcontentsline{toc}{chapter}{Abstract}
 
-L'abstract è il riassunto della tesi. Deve dare in poche righe (in genere 150-300 parole, una mezza pagina), una visione completa e autosufficiente del lavoro: problema, approccio, risultati, senza bisogno di leggere il resto.
+I modelli CAD 2D costituiscono la rappresentazione più diffusa delle planimetrie architettoniche, ma la loro trasformazione in 3D, richiede tipicamente un intervento manuale. Questo lavoro di tesi presenta l'implementazione di una pipeline per la generazione automatica di mesh 3D a partire da planimetrie CAD.
 
-1. Contesto e problema (2-3 righe)
-Qual è il problema generale? Perché è rilevante? Nel tuo caso: la difficoltà di ottenere modelli 3D di ambienti architettonici a partire da planimetrie 2D CAD, utili per rendering, visualizzazione, ecc.
+La principale difficoltà nell'affrontare questo problema risiede nell'assenza di uno standard univoco tra i modelli CAD prodotti da autori e software diversi, il che rende necessario introdurre alcune assunzioni progettuali sulla struttura del modello di input, riguardanti in particolare la geometria dei muri e la denominazione di layer e blocchi.
 
-2. La sfida specifica (1-2 righe)
-Cosa rende il problema difficile? Nel tuo caso: l'assenza di uno standard unico tra i modelli CAD, che rende difficile generalizzare un algoritmo.
+A partire da un file DXF ben formato, la pipeline esegue il parsing delle entità geometriche, la ricostruzione dei varchi di porte e finestre, l'estrazione di un grafo planare tramite struttura dati Half-Edge e la classificazione delle facce risultanti, la triangolazione e l'estrusione verticale differenziata per tipo di elemento, per poi esportare la mesh in formato GLTF, completa di normali e coordinate texture. Il modello viene successivamente importato in Blender, dove viene arricchito con materiali, asset di porte e finestre, posizionati automaticamente sulla base delle informazioni sui varchi esportate dalla pipeline, ed elementi di scena, ai fini della produzione di rendering fotorealistici tramite il motore Cycles.
 
-3. Cosa hai fatto (il cuore dell'abstract, 4-6 righe)
-Qui descrivi Floorplan3D: un sistema/pipeline che, a partire da un file DXF con muri, porte e finestre, produce una mesh 3D esportata in GLTF. Vale la pena accennare, senza entrare troppo nei dettagli implementativi, alle fasi principali della pipeline (parsing, ricostruzione geometrica dei varchi, estrazione del grafo planare e delle facce, triangolazione ed estrusione), perché è proprio questo il contributo tecnico del lavoro.
-
-4. Risultati/validazione (1-2 righe)
-Cosa hai ottenuto? Hai testato su più planimetrie reali? Hai fatto un confronto qualitativo, dei rendering finali in Blender, delle metriche sui tempi di elaborazione, sulla qualità della mesh? Anche un risultato qualitativo ("il sistema produce mesh corrette e prive di artefatti su planimetrie reali di complessità variabile") va benissimo se non hai metriche quantitative.
-
+La pipeline è stata validata su tre planimetrie reali di complessità variabile, reperite da fonti pubbliche, ottenendo in tutti i casi una ricostruzione geometrica corretta a fronte di un intervento manuale limitato e circoscritto alla sola fase di preprocessing, con tempi di elaborazione della pipeline dell'ordine di pochi secondi.
 

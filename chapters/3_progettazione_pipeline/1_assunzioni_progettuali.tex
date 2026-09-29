@@ -1,0 +1,18 @@
+\section{Assunzioni progettuali}
+\label{sec:assunzioni_progettuali}
+
+La difficoltà principale di questo progetto risiede nell'assenza di uno standard univoco tra i modelli CAD, il che rende estremamente complesso progettare un algoritmo in grado di generalizzare correttamente a qualunque modello di input. Per questo motivo è stato necessario introdurre alcune assunzioni progettuali, che definiscono i vincoli entro cui la pipeline è garantita funzionare correttamente:
+
+\begin{itemize}
+	\item I muri devono essere rappresentati come poligoni chiusi dotati di un proprio spessore. Non sono ammesse discontinuità nei contorni (muri "rotti" o aperti): eventuali imperfezioni di questo tipo devono essere corrette manualmente, prima dell'esecuzione della pipeline, tramite un software di editing CAD come LibreCAD.
+	
+	\item Porte e finestre devono essere rappresentate come aperture (fori) nei muri.
+	
+	\item I nomi dei layer e dei blocchi presenti nel file DXF devono rispettare una convenzione fissa:
+	\begin{itemize}
+		\item[--] \textbf{Layer}: \texttt{A-WALL}, \texttt{A-DOOR}, \texttt{A-WINDOW};
+		\item[--] \textbf{Blocchi}: \texttt{BLOCK-DOOR-[0-9]}, \texttt{BLOCK-WINDOW-[0-9]}.
+	\end{itemize}
+	
+	\item Gli elementi di arredo presenti nel modello CAD vengono ignorati: la pipeline prende in considerazione esclusivamente muri, porte e finestre.
+\end{itemize}

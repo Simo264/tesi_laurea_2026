@@ -5,6 +5,8 @@ Un problema classico della computer grafica è quello di scomporre un poligono s
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.75\textwidth]{figures/2_background_teorico/simple-polygon.png}
+	\caption{Rappresentazione di un poligono semplice: i vertici sono collegati in sequenza da spigoli che non si intersecano se non nei vertici stessi.}
+	\label{fig:simple_polygon}
 \end{figure}
 
 La scomposizione di un poligono semplice in triangoli è chiamata triangolazione del poligono.  Qualsiasi triangolazione di un poligono semplice di $n$ vertici ha $n - 2$ triangoli.
@@ -15,7 +17,6 @@ In questa sezione se ne richiamano due tra i più rappresentativi: l'\emph{ear c
 \subsection{Ear clipping}
 \label{subsec:ear_clipping}
 
-
 L'ear clipping è uno dei metodi più diretti per triangolare un poligono semplice. Il metodo si basa sulla nozione di \emph{orecchio} (\emph{ear}): dati tre vertici consecutivi del poligono, essi formano un orecchio se il vertice centrale è convesso e il segmento che unisce il primo e il terzo vertice è interamente contenuto all'interno del poligono, cioè se il triangolo da essi individuato può essere staccato dal poligono senza uscire dal suo contorno. Un risultato noto in geometria computazionale, il \emph{teorema dei due orecchi}, garantisce che ogni poligono semplice con almeno quattro vertici possieda sempre almeno due orecchi.
 
 Si individua un orecchio, lo si rimuove dal poligono (aggiungendo il triangolo corrispondente all'insieme di output), ottenendo un nuovo poligono, più piccolo, che soddisfa ancora le condizioni del teorema; l'operazione viene ripetuta fino a quando non rimane un solo triangolo.
@@ -24,31 +25,37 @@ L'algoritmo è semplice da implementare ma esegue in tempo $O(n^2)$ \cite{eberly
 
 \begin{figure}[htbp]
 	\centering
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figures/2_background_teorico/1-ear-clipping.png}
+		\subcaption{Poligono di partenza.}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figures/2_background_teorico/2-ear-clipping.png}
+		\subcaption{Individuazione di un orecchio.}
 	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figures/2_background_teorico/3-ear-clipping.png}
+		\subcaption{Rimozione dell'orecchio e aggiunta del triangolo.}
 	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
+	\hfill
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figures/2_background_teorico/4-ear-clipping.png}
+		\subcaption{Il poligono risultante è più piccolo.}
 	\end{subfigure}
-	\begin{subfigure}{0.5\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{figures/2_background_teorico/5-ear-clipping.png}
+		\subcaption{Triangolazione completata.}
 	\end{subfigure}
+	\caption{Illustrazione del procedimento di \emph{ear clipping} su un poligono semplice: si individua iterativamente un orecchio, lo si rimuove e si aggiunge il triangolo corrispondente, fino a ottenere la triangolazione completa.}
+	\label{fig:ear_clipping}
 \end{figure}
 
-
-\newpage
 \subsection{Triangolazione di Delaunay}
 \label{subsec:delaunay_cdt}
 
@@ -60,9 +67,9 @@ Per illustrare questa idea, la figura seguente mostra un esempio di ciò che acc
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\textwidth]{figures/2_background_teorico/delaunay-triangulation.png}
+	\caption{Confronto tra una connessione arbitraria dei punti e una triangolazione conforme al criterio di Delaunay. Nel secondo caso non ci sono triangoli degeneri.}
+	\label{fig:delaunay_triangulation}
 \end{figure}
-
-
 
 Dal punto di vista della complessità computazionale, sono noti diversi algoritmi in grado di calcolare la CDT di un PSLG generico in tempo $O(n \log n)$; nel caso particolare in cui l'input sia un singolo poligono semplice, la CDT può essere calcolata in tempo lineare $O(n)$.
 

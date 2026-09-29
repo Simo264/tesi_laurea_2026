@@ -1,27 +1,16 @@
 \section{Esportazione}
-\label{sec:export}
+\label{sec:esportazione}
 
-Come ultimo passo, la mesh viene esportata come file GLTF. Vengono esportate le informazioni relative alla mesh: vertici (posizioni, normali, coordinate texture), indici e primitive. È necessario, in particolare, differenziare all'interno della mesh stessa quali primitive (triangoli) corrispondono al pavimento e quali invece appartengono a muri e soffitto; questa suddivisione viene realizzata sfruttando gli indici. Durante la procedura di generazione della mesh vengono infatti mantenute separatamente le seguenti informazioni:
-\begin{minted}[frame=single]{cpp}
-auto mesh_vertices       = std::vector<Vertex>{};
-auto mesh_floor_indices  = std::vector<u32>{};
-auto mesh_wall_indices   = std::vector<u32>{};
-\end{minted}
+La mesh deve essere esportata in formato GLTF. Per questo compito è stata utilizzata la libreria tinygltf \cite{tinygltf}. Vengono esportate di base le informazioni sui vertici: posizione, normale e coordinate texture.
 
-I vertici sono sempre gli stessi, ma è possibile mappare un intervallo di indici per il pavimento e un intervallo distinto per muri e soffitto. Questo è necessario perché, una volta importato il modello in Blender, occorre poter distinguere il pavimento dal resto della geometria, per poter applicare materiali differenti.
+Attualmente, porte e finestre sono rappresentate come semplici aperture nei muri: questo, tuttavia, non è sufficiente, poiché si vuole poter inserire, in corrispondenza di tali aperture, degli asset 3D di porte e finestre.
 
-\subsection{Gestione degli asset tramite placeholder}
-\label{subsec:placeholders}
+Una prima ipotesi era inserire gli asset direttamente nel processo di generazione della mesh, ma questo approccio risulta poco conveniente: se in un appartamento sono presenti dieci porte, la geometria della porta verrebbe duplicata altrettante volte, aumentando notevolmente la dimensione del file, tanto più se si considera che un modello dettagliato può contare centinaia di migliaia di triangoli. Inoltre, se si vuole cambiare asset o modificarne l'orientamento, sarebbe necessario rieseguire l'intera pipeline. Infine, occorrerebbe anche preservare i materiali originali dell'asset scaricato, complicando ulteriormente il processo.
 
-Attualmente le porte e le finestre sono rappresentate come semplici buchi nei muri, ma questo non è sufficiente: si vuole poter inserire, in corrispondenza di quelle aperture, dei modelli 3D di porte e finestre.
+La soluzione più flessibile e mantenibile consiste nell'adottare un approccio a placeholder, spostando il caricamento degli asset direttamente in Blender. L'idea è di esportare le informazioni sui varchi: quando una faccia viene riconosciuta come porta o finestra, se ne calcolano posizione, larghezza, altezza e spessore, oltre alla rotazione. Più precisamente, il centro rappresenta il centro dell'apertura, calcolato tenendo conto di stipite e davanzale: non si trova quindi all'altezza del soffitto, bensì esattamente a metà dell'apertura stessa.
 
-Una prima ipotesi era inserire tali asset direttamente nel processo di generazione della mesh, ma questo approccio risulta poco conveniente. Se, ad esempio, in un appartamento sono presenti 10 porte identiche, la relativa geometria verrebbe duplicata 10 volte, aumentando notevolmente la dimensione del file GLTF, tanto più se si considera che un modello dettagliato può contare centinaia di migliaia di triangoli. Inoltre, per cambiare l'asset di una porta o modificarne l'orientamento, sarebbe necessario rieseguire l'intera pipeline; sarebbe infine necessario preservare anche i materiali originali del modello scaricato, complicando ulteriormente il processo.
-
-La soluzione più flessibile e mantenibile è un approccio a placeholder, gestito interamente in Blender. La fase di classificazione delle facce viene quindi estesa: quando una faccia viene riconosciuta come porta o finestra, se ne calcola e serializza un \emph{oriented bounding box} (OBB) dell'apertura, memorizzandone centro, larghezza, altezza, spessore, rotazione e tipo. In questo modo non vengono esportati placeholder geometrici, ma unicamente i dati delle aperture.
-
-Una volta raccolte le informazioni sulle aperture di porte e finestre, queste vengono esportate in un file JSON separato, che verrà usato da Blender per per posizionare i rispettivi modelli 3D all'interno della scena.
-
-Di seguito è mostrato un esempio di struttura:
+Tutte queste informazioni vengono infine serializzate ed esportate sotto forma di file JSON. Ad esempio:
+\begin{listing}[H]
 \begin{minted}[frame=single]{json}
 {
 	"openings": [
@@ -31,7 +20,7 @@ Di seguito è mostrato un esempio di struttura:
 		"width": 0.9,
 		"height": 2.1,
 		"thickness": 0.1,
-		"rotation": 90.0
+		"rotation_z": 90.0
 	},
 	{
 		"type": "WINDOW",
@@ -39,7 +28,8 @@ Di seguito è mostrato un esempio di struttura:
 		"width": 1.2,
 		"height": 1.4,
 		"thickness": 0.1,
-		"rotation": 0.0
+		"rotation_z": 0.0
 	}]
 }
 \end{minted}
+\end{listing}

@@ -18,7 +18,6 @@
 \usepackage{inconsolata}
 \usepackage{newtxtext,newtxmath} % font Times New Roman (simile)
 \usepackage{csquotes} % per le citazioni "in blocco"
-\usepackage{booktabs}
 \usepackage{adjustbox}
 \usepackage{filehook}
 \usepackage{makecell}
@@ -46,6 +45,15 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{graphicx}
+\usepackage{placeins}
+\usepackage[simplified]{pgf-umlcd}
+% Imposta lo sfondo delle classi UML a bianco
+\renewcommand{\umlfillcolor}{white}
+% (Opzionale) Imposta il bordo nero
+\renewcommand{\umldrawcolor}{black}
+% (Opzionale) Imposta il testo nero
+%\renewcommand{\umltextcolor}{black}
+
 
 % Definizione dei colori per il codice
 \definecolor{lightgray}{rgb}{.9,.9,.9}
@@ -178,7 +186,7 @@
     \null
     \newpage
     \pagestyle{empty}
-    \input{chapters/abstract}
+    \input{chapters/abstract.tex}
     \clearpage
 
     \pagestyle{empty}
@@ -189,8 +197,7 @@
     %\listoffigures        % Generates the List of Figures
     %\renewcommand{\lstlistingname}{Code}
     %\renewcommand{\lstlistlistingname}{Elenco dei Codici}
-
-    \lstlistoflistings    % Generates the List of Code Listings
+    %\lstlistoflistings    % Generates the List of Code Listings
 
     \clearpage
     \pagestyle{scrplain} % Restores the normal page style (with page number)
@@ -201,12 +208,12 @@
     \input{chapters/introduzione.tex}
 
     \include{chapters/2_background_teorico/main}
-    %\include{chapters/3_progettazione_pipeline/main}
-    %\include{chapters/4_rendering/main}
+    \include{chapters/3_progettazione_pipeline/main}
+    \include{chapters/4_rendering/main}
 
     \input{chapters/risultati.tex}
     \input{chapters/conclusioni.tex}
-    \input{chapters/acknowledgements}
+    %\input{chapters/acknowledgements} % ringraziamenti
 
     \clearpage
 

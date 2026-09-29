@@ -1,49 +1,33 @@
 \section{Preprocessing}
 \label{sec:preprocessing}
 
-Come discusso nel Capitolo~\ref{ch:introduzione}, la fase di preprocessing ha l'obiettivo di rendere il modello CAD quanto più consistente possibile prima dell'elaborazione. Si interviene correggendo i layer, blocchi, geometrie e ridondanze.
+La fase di preprocessing ha l'obiettivo di rendere il modello CAD quanto più consistente possibile, prima che venga elaborato dal resto della pipeline. Si interviene correggendo manualmente i nomi di layer e blocchi, e riparando eventuali geometrie incomplete o ridondanti.
 
-Come caso di studio prendiamo il modello DXF selezionato e lo apriamo con LibreCAD per analizzarlo.
-
+Come caso di studio si considera il seguente modello CAD, aperto in LibreCAD per una prima analisi (Figura ~\ref{fig:caso_studio}). 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1\textwidth]{images/02_geometry_processing/screen001.png}
-	\caption{Modello CAD di caso di studio aperto in LibreCAD.}
-	\label{fig:screen001}
+	\includegraphics[width=1\textwidth]{figures/3_progettazione_pipeline/caso-studio.png}
+	\caption{Modello CAD del caso di studio aperto in LibreCAD: sono visibili i layer e i blocchi con denominazioni non conformi ai criteri imposti.}
+	\label{fig:caso_studio}
 \end{figure}
 
-Isoliamo inizialmente solo i layer relativi ai muri e osserviamo che sono presenti due layer distinti: \texttt{WALL EXTERNAL} (evidenziato in giallo) e \texttt{WALL INTERNAL}. I segmenti del layer \texttt{WALL EXTERNAL} risultano ridondanti e possono essere rimossi senza alcun impatto sulla geometria finale. Osserviamo inoltre che le primitive dei muri non sono polilinee chiuse, bensì segmenti che formano contorni aperti: la geometria risulta quindi incompleta e necessita di correzione. Sono infine presenti due ulteriori segmenti isolati, che costituiscono rumore e possono anch'essi essere rimossi.
+Un primo problema riguarda la denominazione di layer e blocchi, che non rispetta la convenzione imposta nella Sezione \ref{sec:assunzioni_progettuali}; è quindi necessario rinominarli secondo i criteri richiesti.
 
+Il modello presenta inoltre sia muri interni (layer \texttt{WALL-INTERNAL}) sia muri esterni (layer \texttt{WALL-EXTERNAL}). Questi ultimi risultano ridondanti e possono essere rimossi senza alcun impatto sulla geometria finale. Isolando i muri, si osserva come la loro geometria risulti "spezzata": i contorni formano poligoni aperti, in violazione delle condizioni di validità imposte nella Sezione \ref{sec:assunzioni_progettuali}, e richiedono pertanto una correzione manuale (Figura ~\ref{fig:muri_rotti}).
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{images/02_geometry_processing/screen002.png}
-	\caption{Layer dei muri prima della correzione: si notano il layer ridondante \texttt{WALL EXTERNAL}, i contorni aperti e i segmenti isolati.}
-	\label{fig:screen002}
+	\includegraphics[width=0.75\textwidth]{figures/3_progettazione_pipeline/muri-rotti.png}
+	\caption{I muri isolati risultano geometricamente incompleti: formano poligoni aperti che non rispettano le condizioni di validità imposte e richiedono una correzione.}
+	\label{fig:muri_rotti}
 \end{figure}
 
-Dopo aver corretto questi problemi, otteniamo la rappresentazione dei muri mostrata in figura:
+Anche le finestre presentano problemi di rappresentazione analoghi: ciascuna è composta da centinaia di segmenti, spesso sovrapposti tra loro; alcuni si estendono al di fuori della stanza, altri penetrano al suo interno.
 
+Al termine della fase di correzione si ottiene il seguente risultato (Figura ~\ref{fig:modello_cad_finale}).
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{images/02_geometry_processing/screen003.png}
-	\caption{Layer dei muri dopo la correzione.}
-	\label{fig:screen003}
+	\includegraphics[width=1\textwidth]{figures/3_progettazione_pipeline/modello-cad-finale.png}
+	\caption{Modello CAD al termine della fase di preprocessing: i layer e i blocchi sono stati rinominati secondo i criteri imposti, i muri esterni ridondanti sono stati rimossi e la geometria dei muri e delle finestre è stata corretta.}
+	\label{fig:modello_cad_finale}
 \end{figure}
 
-Nonostante i muri siano ancora separati tra loro, a causa della presenza di porte e finestre, quello che otteniamo è un insieme di poligoni chiusi. Analizziamo a questo punto le finestre: osserviamo come non siano rappresentate in una forma adeguata. Ogni finestra è descritta come un blocco (\texttt{BLOCK}) contenente centinaia di segmenti; inoltre, due finestre risultano sovrapposte tra loro, e due di queste fuoriescono addirittura dalle mura.
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{images/02_geometry_processing/screen004.png}
-	\caption{Rappresentazione originale delle finestre: si notano il blocco composto da centinaia di segmenti, la sovrapposizione tra due finestre e una finestra che invade lo spazio interno.}
-	\label{fig:screen004}
-\end{figure}
-
-Dopodiché, i layer sono stati rinominati in modo coerente: \texttt{A-WALL} per i muri, \texttt{A-DOOR} per le porte e \texttt{A-WINDOW} per le finestre. Tutti gli altri layer, non essendo rilevanti per la ricostruzione della geometria, sono stati esclusi. Anche i blocchi sono stati rinominati: un blocco per la porta (\texttt{BLOCK-DOOR-1}) e quattro blocchi per le finestre (\texttt{BLOCK-WINDOW-1}, \ldots, \texttt{BLOCK-WINDOW-4}).
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.7\textwidth]{images/02_geometry_processing/screen005.png}
-	\caption{Rappresentazione delle finestre dopo la correzione.}
-	\label{fig:screen005}
-\end{figure}
