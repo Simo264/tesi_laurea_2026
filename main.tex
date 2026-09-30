@@ -1,5 +1,10 @@
+\PassOptionsToPackage{hidelinks}{hyperref}
+
 % Carattere dimensione 12
 \documentclass[12pt]{report}
+
+\usepackage[a-2b]{pdfx}
+%\hypersetup{hidelinks}
 
 % Margini (2.5cm su tutti i lati)
 \usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, head=21.75pt, centering]{geometry}
@@ -46,7 +51,9 @@
 \usepackage{algpseudocode}
 \usepackage{graphicx}
 \usepackage{placeins}
+\usepackage{enumitem}
 \usepackage[simplified]{pgf-umlcd}
+
 % Imposta lo sfondo delle classi UML a bianco
 \renewcommand{\umlfillcolor}{white}
 % (Opzionale) Imposta il bordo nero
@@ -148,8 +155,6 @@
 \titlespacing*{\chapter}{0pt}{-20pt}{25pt}
 
 
-\usepackage{enumitem}
-
 \begin{document}
     \begin{titlepage}
 
@@ -181,6 +186,7 @@
         \centering{\large{\bf ANNO ACCADEMICO 2025/2026 }}
     \pagenumbering{roman}
     \end{titlepage}
+    
     \newpage
     \thispagestyle{empty}
     \null

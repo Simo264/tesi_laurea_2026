@@ -26,6 +26,8 @@
 *.lof
 *.lot
 *.lol
+*.xmpi
+main-blx.bib
 
 ## File temporanei degli editor (TeXStudio, VS Code, Overleaf, ecc.)
 *.bak
