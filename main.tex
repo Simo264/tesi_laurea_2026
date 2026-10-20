@@ -1,23 +1,46 @@
 \PassOptionsToPackage{hidelinks}{hyperref}
 
 % Carattere dimensione 12
-\documentclass[12pt]{report}
+% \documentclass[12pt]{report}
+\documentclass[12pt,twoside]{report}
 
 \usepackage[a-2b]{pdfx}
-%\hypersetup{hidelinks}
 
 % Margini (2.5cm su tutti i lati)
-\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, head=21.75pt, centering]{geometry}
+%\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, head=21.75pt, centering]{geometry}
+\usepackage[
+	a4paper,
+	top=2.5cm,
+	bottom=2.5cm,
+	inner=3.5cm,
+	outer=2.5cm,
+	head=21.75pt
+]{geometry}
+
 
 % Interlinea
 \linespread{1.5}
 \usepackage[italian]{babel} % applicazione regole di scrittura per la lingua italiana
 \usepackage[utf8]{inputenc} % codifica UTF-8
-\usepackage{scrlayer-scrpage} % stili pagina per il frontespizio
-\ifoot[]{}
-\cfoot[]{}
-\ofoot[\pagemark]{\pagemark}
-\pagestyle{scrplain}
+
+%\usepackage{scrlayer-scrpage} % stili pagina per il frontespizio
+%\ifoot[]{}
+%\cfoot[]{}
+%\ofoot[\pagemark]{\pagemark}
+%\usepackage{fancyhdr}
+%\pagestyle{fancy}
+%\fancyhf{}
+%\fancyfoot[LE,RO]{\thepage}
+%\renewcommand{\headrulewidth}{0pt}
+%\renewcommand{\footrulewidth}{0pt}
+
+\usepackage{scrlayer-scrpage}
+
+\clearpairofpagestyles
+\ofoot*{\pagemark}
+\KOMAoptions{headsepline=false,footsepline=false}
+
+
 \usepackage[hidelinks]{hyperref} % pacchetto per l'utilizzo dei link
 \usepackage[T1]{fontenc}
 \usepackage{inconsolata}
@@ -31,7 +54,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{subcaption} % per le sottofigure
 \usepackage[backend=bibtex]{biblatex} % bibliografia con pacchetto biblatex
-\usepackage{verbatim} % per usare \begin{comment} \end{comment}
+\usepackage{verbatim}
 \usepackage{multirow}
 \appto{\bibsetup}{\raggedright}
 \addbibresource{bibliography.bib} % Collega il file della bibliografia
@@ -44,9 +67,7 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{xurl}
-% \usepackage{tikz}
-% \usetikzlibrary{calc}
-\usepackage{booktabs} % for \toprule, \midrule, \bottomrule in tables
+\usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{graphicx}
@@ -54,15 +75,10 @@
 \usepackage{enumitem}
 \usepackage[simplified]{pgf-umlcd}
 
-% Imposta lo sfondo delle classi UML a bianco
 \renewcommand{\umlfillcolor}{white}
-% (Opzionale) Imposta il bordo nero
 \renewcommand{\umldrawcolor}{black}
-% (Opzionale) Imposta il testo nero
-%\renewcommand{\umltextcolor}{black}
 
 
-% Definizione dei colori per il codice
 \definecolor{lightgray}{rgb}{.9,.9,.9}
 \definecolor{darkgray}{rgb}{.4,.4,.4}
 \definecolor{purple}{rgb}{0.65, 0.12, 0.82}
@@ -155,6 +171,8 @@
 \titlespacing*{\chapter}{0pt}{-20pt}{25pt}
 
 
+
+
 \begin{document}
     \begin{titlepage}
 
@@ -206,7 +224,8 @@
     %\lstlistoflistings    % Generates the List of Code Listings
 
     \clearpage
-    \pagestyle{scrplain} % Restores the normal page style (with page number)
+    %\pagestyle{scrplain} % Restores the normal page style (with page number)
+    \pagestyle{scrheadings}
     \setcounter{page}{1} % Restart page numbering from 1
     \pagenumbering{arabic}
 
