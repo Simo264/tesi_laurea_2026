@@ -307,7 +307,7 @@ figure video { width: 100%; height: var(--img-h); object-fit: contain; }
 <div class="row">
 
 <figure>
-<video src="figures/recording-spatial-hash.webm" autoplay loop muted playsinline></video>
+<video src="figures/recording-spatial-hash.mp4" autoplay loop muted playsinline></video>
 </figure>
 
 <div class="col">
@@ -913,7 +913,7 @@ figure video { width: 100%; height: var(--img-h); object-fit: contain; }
 # Mesh Preview
 
 <figure>
-<video src="figures/mesh-preview.mp4" autoplay loop muted playsinline></video>
+  <video src="figures/mesh-preview.mp4" autoplay loop muted playsinline></video>
 <figcaption>Mesh 3D generata dalla pipeline (prima dell'inserimento degli asset)</figcaption>
 </figure>
 
@@ -1114,7 +1114,9 @@ section { font-size: 20px; }
 
 # Rendering con Cycles
 
-<p class="goal"><b>Cycles</b>: motore di rendering <i>physically-based</i> a <b>path tracing</b></p>
+<p class="goal">
+  <b>Cycles</b>: path tracer <i>physically-based</i>
+</p>
 
 <div class="row">
 <div class="card">
@@ -1144,7 +1146,7 @@ per immagine, in base alla complessità
 </div>
 </div>
 
-<p class="sub">Su <b>CPU</b> (AMD Ryzen 5 2600X)</p>
+<p class="sub">Su <b>CPU</b> AMD Ryzen 5 2600X</p>
 
 ---
 

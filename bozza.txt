@@ -1,0 +1,4 @@
+Salve prof, le volevo chiedere una informazione sul formato della presentazione. 
+La presentazione l'ho prodotta scrivendo in Markdown usando MARP (Markdown Presentation Ecosystem), contiene immagini, video, GIF. Posso esportare in formato Html, PDF e PPTX. Se presento usando il Browser (file html) si vede perfettamente con i video in autoplay, mentre in PDF e PPTX (Libreoffice e OnlyOffice) i video sono statici.
+Durante la presentazione è possibile presentare usando Chrome o Brave oppure si utilizza per forza di cose Powerpoint? 
+Io per sicurezza consegno tutto.
