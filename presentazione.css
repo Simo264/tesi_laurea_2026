@@ -1,22 +1,34 @@
 /* @theme presentazione */
 @import 'default';
 
-section { padding: 24px 40px; font-size: 22px; }
+section {
+  --blue: #1b4fa8;
+  --red: #b02a2a;
+  --green: #1e7a43;
+  --orange: #b87400;
+
+  padding: 24px 40px; font-size: 22px;
+}
+
 h1 { font-size: 1.8em; margin: 0 0 14px 0; line-height: 1.1; text-align: center; }
 
 /* layout */
 .row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
 .col { display: flex; flex-direction: column; gap: 12px; }
-.arrow { text-align: center; font-size: 1.6em; color: #2a6fdb; line-height: 1; }
+.arrow { text-align: center; font-size: 1.6em; color: var(--blue); line-height: 1; }
 
 /* box: colore di default blu, varianti con classe */
-.card, .box { --c: #2a6fdb; border-left: 6px solid var(--c); background: #f3f6fb;
-  padding: 8px 16px; border-radius: 6px; line-height: 1.3; }
+.card, .box { --c: var(--blue); border-left: 6px solid var(--c); background: #f3f6fb;
+  padding: 8px 16px; border-radius: 0px; line-height: 1.3; }
+
 .card h2, .box h2 { font-size: 1.05em; margin: 0 0 4px 0; padding: 0; color: var(--c); }
 .card ul, .box ul { margin: 0; padding-left: 1.1em; }
 .card li, .box li { margin: 0 0 3px 0; }
 .card p, .box p { margin: 0 0 4px 0; }
-.red { --c: #d9534f; } .orange { --c: #e69b1e; } .green { --c: #2e9e5b; }
+
+.red { --c: var(--red); }
+.orange { --c: var(--orange); }
+.green { --c: var(--green); }
 
 /* figure: altezza regolabile per slide con --img-h */
 figure { margin: 0; text-align: center; }
@@ -33,5 +45,5 @@ code { background: #e3e9f3; padding: 1px 6px; border-radius: 4px; font-size: 0.8
 .goal { text-align: center; margin: 0 0 10px 0; font-size: 0.95em; }
 
 /* didascalia in due livelli (titolo colorato + sottotitolo) */
-figcaption b { display: block; font-size: 1.1em; color: var(--c, #d9534f); }
+figcaption b { display: block; font-size: 1.1em; color: var(--c, var(--red)); }
 figcaption span { font-size: 0.85em; color: #555; }
