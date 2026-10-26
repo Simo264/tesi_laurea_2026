@@ -37,5 +37,6 @@ npx @marp-team/marp-cli@latest presentazione.md \
   --theme-set presentazione.css \
   --output presentazione.pptx \
   --browser-path /usr/bin/brave \
+  --pptx \
   --allow-local-files
 ```

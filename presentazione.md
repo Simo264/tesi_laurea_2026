@@ -307,7 +307,7 @@ figure video { width: 100%; height: var(--img-h); object-fit: contain; }
 <div class="row">
 
 <figure>
-<video src="figures/recording-spatial-hash.mp4" autoplay loop muted playsinline></video>
+<video src="figures/recording_SpatialHash.mp4" autoplay loop muted playsinline></video>
 </figure>
 
 <div class="col">
