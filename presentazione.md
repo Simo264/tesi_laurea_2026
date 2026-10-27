@@ -384,11 +384,6 @@ Per il clustering vengono generati nuovi punti campionati dai singoli segmenti d
 
 Dopo che abbiamo generato i cluster, calcoliamo per ognuno il bounding box da cui si estrae uno dei due lati lunghi, che sarà il segmento che collega i due vertici dei muri. In questo modo si applica lo stesso ragionamento e procedura appena vista per le porte. L’unica differenza rispetto al caso delle porte è che gli edge vengono taggati WINDOW anziché DOOR.
 <cluster.jpg>
-
-Importante: alla fine della ricostruzione non sono stati creati nuovi vertici, ma sono solo stati aggiunti nuovi edge.
-
-Figura: Rappresentazione finale
-<doors-windows-connected.jpg>
 -->
 
 <style scoped>
@@ -574,20 +569,16 @@ section { --img-h: 270px; --cap: 0.8em; font-size: 20px; }
 
 <!--
 Estrazione Facce
-
-Le strutture dati per la connettività derivano dall’idea di rappresentare una mesh come grafo: un insieme di vertici e di archi, a cui si aggiunge un insieme di facce definite come cicli ordinati di vertici o archi.
-Un grafo è planare se può essere disegnato senza che i suoi archi si intersechino. Quando gli archi non sono curvi ma sono semplicemente rettilinei si parla di Grafo Planare Rettilineo (Planar Straight-Line Graph): ed è il punto di partenza per operazioni come l’estrazione delle facce racchiuse dal grafo.
+Oltre alla semplice memorizzazione indicizzata, esistono diverse strutture pensate per rendere esplicita ed efficiente la navigazione della connettività di una mesh. Una di queste è la struttura Half-Edge (o doubly-linked edge list): per ogni edge ci sono due "half-edge" orientati in direzioni opposte, uno per ciascuna delle due facce che condividono l’arco. Ogni half-edge memorizza un riferimento alla faccia sul proprio lato dell’arco, al vertice verso cui punta, al proprio gemello (l’half-edge opposto) e all’half-edge successivo lungo il perimetro della propria faccia. Percorrendo ripetutamente questi riferimenti "successivi" si ottiene un ciclo chiuso corrispondente esattamente al contorno di una faccia.
+<cgal-halfedge.png>, <half-edge.png>
 
 Domanda: Non è possibile estrarre le facce usando unicamente quel grafo?
 Il grafo da solo non basta. Il grafo contiene vertici ed edge, ma non dice in che ordine gli edge si dispongono attorno a un vertice. Una faccia è un ciclo chiuso che, a ogni vertice, gira sempre dallo stesso lato (ad esempio all’edge successivo in senso antiorario).
 `twin` e `next` sono quell’ordinamento già calcolato. Quindi l’Half-Edge non è un’alternativa al grafo, ma lo arricchisce con la connettività.
 
-Oltre alla semplice memorizzazione indicizzata, esistono diverse strutture pensate per rendere esplicita ed efficiente la navigazione della connettività di una mesh. Una di queste è la struttura Half-Edge (o doubly-linked edge list): per ogni edge ci sono due "half-edge" orientati in direzioni opposte, uno per ciascuna delle due facce che condividono l’arco. Ogni half-edge memorizza un riferimento alla faccia sul proprio lato dell’arco, al vertice verso cui punta, al proprio gemello (l’half-edge opposto) e all’half-edge successivo lungo il perimetro della propria faccia. Percorrendo ripetutamente questi riferimenti "successivi" si ottiene un ciclo chiuso corrispondente esattamente al contorno di una faccia.
-<cgal-halfedge.png>, <half-edge.png>
-
 L'informazione sul tipo di segmento (WALL, DOOR, WINDOW) viene mantenuta sugli half-edge e ai loro twin, così da essere disponibile per la classificazione delle facce.
 
-Per implementare questa struttura è stata utilizzata la libreria CGAL che fornisce tra le altre la struttura Arrangement che contiene vertici, half-edge orientati e una lista di poligoni (facce). 
+Per implementare questa struttura è stata utilizzata la libreria CGAL che fornisce tra le altre la struttura Arrangement che contiene vertici, half-edge orientati e una lista di poligoni (facce).
 -->
 
 ---
@@ -682,13 +673,6 @@ Vertici, half-edge e **lista di facce**. I **tag** restano su ogni half-edge e s
 
 ---
 
-<!-- 
-Classificazione Facce
-
-Classificare le facce è NECESSARIO per effettura l'estrusione differenziata. Itero su tutte le facce e le classifico in base a quali tipi di segmenti è costituita: ad esempio posso considerare una faccia DOOR se è costituita esattamente da 2 edge rossi (DOOR) e 2 edge neri (muri), una faccia WINDOW se è costituita esattamente da 2 edge blu (WINDOW) e 2 edge neri, oppure una faccia DOOR se è costituita da tutti segmenti neri. 
-<faces.png>
--->
-
 <style scoped>
 .row { grid-template-columns: 1.2fr 1fr; align-items: center; }
 section { --img-h: 420px; font-size: 20px; }
@@ -747,7 +731,6 @@ Estrusione
 
 L’estrusione è il processo di trasformare forme 2D a forme tridimensionali assegnando un'altezza e una direzione. Consiste nel trasformare poligoni in solidi lungo un asse.
 Siccome noi non abbiamo a che fare con forme particolari o forme curve, il procedimento è molto semplice: si duplicano i vertici del piano 2d, si traslano ad una certa altezza e per ogni lato si crea un quad verticale (definito da 2 triangoli).
-<Processo_di_estrusione_da_2D_a_3D.png>, <estrusione_poligono_muro_CAD.gif>
 -->
 
 <style scoped>
@@ -917,24 +900,6 @@ figure video { width: 100%; height: var(--img-h); object-fit: contain; }
 <figcaption>Mesh 3D generata dalla pipeline (prima dell'inserimento degli asset)</figcaption>
 </figure>
 
-<!--
-Esportazione
-
-Adesso abbiamo una mesh tridimensionale effettiva  con vertici, indici, normali e texture coordinates. La mesh deve essere esportata in formato aperto (GLTF).
-
-Se provassi a renderizzare la mesh così com'è vedrei dei semplici buchi vuoti a ridosso di porte e finestre. Non è ancora accettabile. Vogliamo la possibilità di potere inserire degli asset 3D.
-
-Una prima ipotesi era inserire gli asset direttamente nel processo di generazione della mesh, ma questo approccio risulta poco conveniente. Consideriamo solo il caso delle porte. Un asset di una porta dettagliata può arrivare a contenere centinaia/migliaia di vertici. Se in un appartamento sono presenti 10 porte, la geometria della porta verrebbe duplicata 10 volte, aumentando notevolmente la dimensione del file. Oppure, Inoltre, se si vuole cambiare asset oppure modificare l’orientamento di una porta bisognerebbe rieseguire l’intera pipeline. Occorre anche preservare i materiali originali dell’asset scaricato, complicando ulteriormente il processo.
-
-La soluzione più flessibile e mantenibile consiste nell’adottare un approccio a placeholder, spostando il caricamento degli asset direttamente in Blender. Blender gestisce l'instancing: consideriamo una una mesh di una porta ripetuta tante volte, i vertici della stessa mesh non vengono duplicati tante volte quante il numero di porte. I vertici sono allocati una volta sola e condivisi tra le altre instance. Quello che cambia è la matrice di trasformazione (traslazione, scala, rotazione) e il materiale (è possibile anche cambiare materiale alle diverse porte)
-
-Mi serve solamente esportare informazioni su dove inserire gli asset, con quale orientamento e con quale scala. Tutte queste informazioni vengono infine serializzate ed esportate sotto forma di file JSON, insieme al modello GLTF.
-
-In pratica la pipeline esporta due file:
-- mesh GLTF
-- placeholders JSON
--->
-
 ---
 
 <style scoped>
@@ -1011,38 +976,6 @@ carica gli asset
 </div>
 
 --- 
-
-<!--
-
-Rendering
-
-Per la fase di rendering viene utilizzato Blender, sia tramite uno script Python basato sulle API bpy, sia tramite GUI.
-
-Il file GLTF esportato contiene esclusivamente la geometria
-della mesh (posizioni, normali e coordinate texture) e non include alcuna informazione sui materiali. I materiali, gli asset, l'illuminazione, la camera, l’environment map vengono definiti in Blender. Questa soluzione è anche la più flessibile: è possibile cambiare i materiali dover rieseguire ogni volta l’intera pipeline.
-
-Inizialmente si era valutato di eseguire l’intero rendering all’interno dello script Python. Questo approccio si è tuttavia rivelato poco pratico: posizione e rotazione della camera, così come posizione e intensità delle luci, avrebbero dovuto essere codificate direttamente nel codice (hard-coded), rendendo la scelta dei parametri tediosa e poco intuitiva.
-
-Si è quindi adottato un approccio ibrido: lo script Python automatizza le operazioni ripetitive e deterministiche, mentre la composizione finale della scena (camera e luci) è affidata alla GUI. Nello script:
-- importo la mesh GLTF
-- definisco i materiali (albedo, normal, roughness, ecc.) diversi per il pavimento e muri
-- carico l’environment map
-- leggo i placeholder e carico gli asset
-- alla fine creo la scena iniziale file .blend
-
-Il file .blend generato viene aperto in Blender tramite GUI e qua possiamo navigare e impostare la camera, posizionare le luci e modificarne le proprietà maniera più semplice. Grazie alla modalità GUI è possibile aggiungere facilmente ulteriori asset per arredarla come un divano, una TV, una lampada, ecc.
-
-Il rendering viene eseguito con Cycles: physically-based path tracing render engine.
-Il rendering è stato effettuato a risoluzione 1280x720, con 128 samples per pixel, denoiser (OpenImageDenoise), su CPU (AMD Ryzen 5 2600X) perché la mia GPU non è adatta  per PT con Cycles. 
-Il tempo di rendering varia in base alla complessità della scena: da 3 a 7 minuti per una immagine.
-
-Risultati
-
-<rendering-1.png>
-<rendering-2.png>
-<rendering-3.png>
-<rendering-4.png>
--->
 
 <style scoped>
 section { font-size: 19px; }
