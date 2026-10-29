@@ -31,19 +31,6 @@ Università degli Studi di Modena e Reggio Emilia · A.A. 2025/2026</p>
 
 ---
 
-<!-- 
-DESCRIZIONE DEI PROBLEMI
-
-2. le finestre a volte venivano rappresentate come buchi tra i muri mentre altre volte venivano sovrapposte ai muri, a volte veniva rappresentato il vetro interno e altre volte no, ecc.
-
-3. le porte a volte rappresentate con l’anta e l’arco di apertura mentre altre come porta battente a 2 ante, altre volte possono essere rappresentati come dei rettangoli.
-
-4. la geometria presentasse talvolta del rumore e imperfezioni. Succedeva che erano presenti segmenti/punti residui lasciati durante la modifica del disegno, oppure i muri risultavano "rotti" (aperti) e non erano dei poligoni chiusi, estremità non coincidenti per piccole distanze
-
-5. succedeva che nel caso delle porte queste venissero rappresentate o salvate in modo diverso, perché quando provavo a fare il parsing su modello (draftperson) funzionava mentre se provavo su un altro modello (archweb) non funzionava più nel senso che i segmenti venivano plottati in modo errato nonostante la procedura fosse uguale per entrambi.
-
--->
-
 <style scoped>
 section { font-size: 20px; }
 h1 { margin-bottom: 22px; line-height: 1.5; }
@@ -179,16 +166,6 @@ section { --img-h: 380px; --cap: 0.85em; }
 
 ---
 
-<!-- 
-Il formato DXF organizza il disegno in primitive geometriche: LINE, POLYLINE, ARC, CIRCLE, ecc. Queste entità sono raggruppate in layer e blocchi (componenti riutilizzabili comunemente impiegati per rappresentare porte e finestre).
-
-L’obiettivo della fase di parsing è estrarre da queste primitive le informazioni geometriche necessarie alla costruzione della mesh. Siccome sappiamo come sono strutturati i nomi dei layer/blocchi ci viene molto più facile estrarre le primitive collassando tutte le primitive sotto forma di segmenti, così da ottenere una rappresentazione uniforme.
-
-Un segmento è semplicemente un coppia di vertici a cui viene associato un TAG che ne indica la semantica (muro, porta o finestra).
-
-Quasi sempre, le primitive più uilizzate nei disegni sono: LINE (coppia di vertici), POLYLINE (contorno chiuso) e ARC. Questi ultimi sono tipici delle porte: si estrae il raggio, il punto base, l’angolo iniziale e finale e a partire da questi dati si calcolano i due punti estremi.
--->
-
 <style scoped>
 .row { grid-template-columns: 1fr 1.3fr; align-items: center; }
 section { --img-h: 470px; font-size: 20px; }
@@ -237,20 +214,6 @@ $TAG = \{ \text{WALL, DOOR, WINDOW} \}$
 
 
 ---
-
-<!-- 
-Nei disegni CAD, in uno stesso punto ci sono più vertici (appartenenti a segmenti diversi) sovrapposti oppure molto vicini da essere indistinguibili. Questa operazione serve sia a ridurre il numero di vertici da elaborare ma soprattutto per riuscire a rappresentare la geometria come grafo con vertici univoci.
-
-L’obiettivo è prendere l’insieme dei segmenti e rimuovere vertici che sono considerati in più, ovvero che distano meno di $epsilon$. Per risolvere questo problema in modo efficiente si è scelto di implementare una struttura dati spaziale efficiente: un hash spaziale.
-Il funzionamento è semplice: lo spazio 2D viene suddiviso in una griglia regolare, in cui ogni cella ha una dimensione fissa. A ciascun punto viene associata esattamente una cella, calcolata in base alle sue coordinate (posizione).
-Una proprietà interessante di questa struttura è che se la dimensione della cella è scelta pari al raggio di ricerca 𝑟, due punti che distano meno di 𝑟 si trovano necessariamente nella stessa cella oppure in una delle celle immediatamente adiacenti.
-Questo significa che, per rispondere a un’interrogazione centrata in un punto 𝑝, non è necessario esaminare l’intero insieme di punti, ma è sufficiente fare una ricerca nella griglia 3x3
-
-Il parametro epsilon definisce il raggio di ricerca 𝑟 e di conseguenza la dimensione della cella. Dato un punto 𝑝, cerca nella griglia 3x3 un vertice già esistente che disti meno di epsilon; se esiste già il nuovo vertice viene scartato senza essere inserito nella griglia, altrimenti viene inserito.
-In questo caso è stato utilizzato epsilon=10^(-2) per avere una riduzione di circa il 50% dei vertici. In generale non esiste un valore unico per tutti i modelli, occorre provare e verificare.
-
-Durante la creazione della struttura spaziale prendo ogni singolo segmento (dei muri) e rimuovo i duplicati, ma allo stesso tempo mi salvo gli archi Edge con riferimenti ai due vertici estremi. Alla fine io otterrò sia l'insieme dei vertici univoci V, sia anche la lista degli archi E. Praticamente un grafo.
--->
 
 <style scoped>
 section { --img-h: 270px; --cap: 0.8em; font-size: 20px; }
@@ -348,43 +311,6 @@ Vertici univoci $V$ e archi $E$: un **grafo non connesso** $G = \langle V, E \ra
 </div>
 
 ---
-
-<!-- 
-Ricostruzione dei varchi
-
-1. Ricostruzione porte
-
-L'idea è di iterare su tutti i segmenti (rossi) delle porte, prelevare le due estremità (vertici) e, sfruttando la struttura spaziale, cercare i due vertici di muro più vicini che rappresentano i punti di giunzione. Una volta recuperati i due vertici di giunzione inseriamo un nuovo Edge (con tag:DOOR).
-
-Per capire meglio osserviamo la seguente immagine:  Grafo dei muri e nuovo arco (tag DOOR) tra i vertici 𝐶 e 𝐷, individuati come i vertici dei muri più vicini alle estremità del segmento della porta.
-<figures/3_progettazione_pipeline/wall_graph.png>
-
-Inserire un solo segmento non ci basta. Per ottenere un poligono semplice è necessario inserire un secondo arco (parallelo) tra i vertici 𝐴,𝐵. 
-Il criterio per individuare 𝐴 e B: conosciamo i due vertici di giunzione C,D e calcoliamo il versore CD. Consideriamo il vertice C e i suoi due vicini che sono F,A. Dobbiamo verificare quale dei due vertici il vettore risultante sia ortogonale a CD. Si sfrutta la proprietà del prodotto scalare tra due vettori unitari: se il risultato è 0 i due vettori sono perpendicolari; altrimenti se è -1 sono opposti.
-In questo caso il vertice candidato è A:
-- CD dot CF = -1 
-- CD dot CA = 0
-
-Dall'altra parte il vertice candidato è B:
-- CD dot DH = -1 
-- CD dot DB = 0
-
-Inseriamo il secondo Edge tra A,B.
-Figura: inserimento del secondo edge.
-<figures/3_progettazione_pipeline/wall_graph2.png>
-
-2. Ricostruzione finestre
-In questo caso ogni finestra contiene decine di segmenti e vertici. In altri modelli possono essere rappresentate in maniera più o meno diversa. è necessario un approccio più generale basato sul clustering spaziale. 
-L’obbiettivo è di raggruppare dei punti in gruppi (cluster). Un parametro fondamentale è il raggio di prossimità `r`: per ogni punto viene considerato un piccolo cerchio di raggio r, si contano quanti punti cadono dentro al cerchio e se il numero è maggiore di `m` allora è un "core point". In altre parole, se in un intorno di un punto p sono presenti almeno 2 punti allora si dice essere core point e viene assegnato ad un certo cluster.  I punti che si trovano vicino al core point vengono considerati dentro al cluster. è importante impostare bene il raggio `r` perché troppo grande tende a far collassare cluster distinti in un unico
-cluster; al contrario, un valore troppo piccolo produce una frammentazione eccessiva.
-<3_dbscan.png> -> <7_dbscan.png>
-
-Per ogni finestra viene calcolato un cluster indipendente. Qua il valore `m` è di default 2, mentre deve essere tarato il valore `r` (diverso da disegno a disegno). 
-Per il clustering vengono generati nuovi punti campionati dai singoli segmenti di finestre e su questi nuovi punti si esegue l'algoritmo di clustering.
-
-Dopo che abbiamo generato i cluster, calcoliamo per ognuno il bounding box da cui si estrae uno dei due lati lunghi, che sarà il segmento che collega i due vertici dei muri. In questo modo si applica lo stesso ragionamento e procedura appena vista per le porte. L’unica differenza rispetto al caso delle porte è che gli edge vengono taggati WINDOW anziché DOOR.
-<cluster.jpg>
--->
 
 <style scoped>
 .row { grid-template-columns: 1.2fr 1fr; align-items: center; }
@@ -567,20 +493,6 @@ section { --img-h: 270px; --cap: 0.8em; font-size: 20px; }
 </div>
 </div>
 
-<!--
-Estrazione Facce
-Oltre alla semplice memorizzazione indicizzata, esistono diverse strutture pensate per rendere esplicita ed efficiente la navigazione della connettività di una mesh. Una di queste è la struttura Half-Edge (o doubly-linked edge list): per ogni edge ci sono due "half-edge" orientati in direzioni opposte, uno per ciascuna delle due facce che condividono l’arco. Ogni half-edge memorizza un riferimento alla faccia sul proprio lato dell’arco, al vertice verso cui punta, al proprio gemello (l’half-edge opposto) e all’half-edge successivo lungo il perimetro della propria faccia. Percorrendo ripetutamente questi riferimenti "successivi" si ottiene un ciclo chiuso corrispondente esattamente al contorno di una faccia.
-<cgal-halfedge.png>, <half-edge.png>
-
-Domanda: Non è possibile estrarre le facce usando unicamente quel grafo?
-Il grafo da solo non basta. Il grafo contiene vertici ed edge, ma non dice in che ordine gli edge si dispongono attorno a un vertice. Una faccia è un ciclo chiuso che, a ogni vertice, gira sempre dallo stesso lato (ad esempio all’edge successivo in senso antiorario).
-`twin` e `next` sono quell’ordinamento già calcolato. Quindi l’Half-Edge non è un’alternativa al grafo, ma lo arricchisce con la connettività.
-
-L'informazione sul tipo di segmento (WALL, DOOR, WINDOW) viene mantenuta sugli half-edge e ai loro twin, così da essere disponibile per la classificazione delle facce.
-
-Per implementare questa struttura è stata utilizzata la libreria CGAL che fornisce tra le altre la struttura Arrangement che contiene vertici, half-edge orientati e una lista di poligoni (facce).
--->
-
 ---
 
 <style scoped>
@@ -726,13 +638,6 @@ Solo edge `WALL`
 
 ---
 
-<!-- 
-Estrusione 
-
-L’estrusione è il processo di trasformare forme 2D a forme tridimensionali assegnando un'altezza e una direzione. Consiste nel trasformare poligoni in solidi lungo un asse.
-Siccome noi non abbiamo a che fare con forme particolari o forme curve, il procedimento è molto semplice: si duplicano i vertici del piano 2d, si traslano ad una certa altezza e per ogni lato si crea un quad verticale (definito da 2 triangoli).
--->
-
 <style scoped>
 .row { grid-template-columns: 1.4fr 1fr; align-items: center; gap: 24px; }
 .col { gap: 10px; }
@@ -759,27 +664,6 @@ section { --img-h: 420px; --cap: 0.8em; }
 </figure>
 </div>
 </div>
-
-<!-- 
-Rappresentazione di una mesh
-
-La maggior parte dei modelli 3D utilizzati in applicazioni reali è composta da triangoli. Una mesh triangolare è una rete di triangoli connessi tramite vertici e archi condivisi a formare un’unica superficie continua. I triangoli possono essere memorizzati come entità indipendenti, ciascuna con i propri tre vertici (duplicazione dei vertici e spreco di spazio), oppure memorizzare una sola volta ciascun vertice distinto e far sì che ogni triangolo vi faccia riferimento tramite un indice (indexed triangle mesh). Un vertice può essere arricchito con attributi aggiuntivi: normale e texture coordinate che sono fondamentali durante i calcoli di shading (illuminazione)
-Figura: rappresentazione di una indexed triangle mesh
-<indexed-triangle-mesh.png>
-
-Algoritmi di triangolazione
-Un problema classico della computer grafica è quello di scomporre un poligono semplice in triangoli. La scomposizione di un poligono semplice in triangoli è chiamata triangolazione del poligono. Qua è stato considerato Constrained Delaunay Triangulation. 
-Il flusso classico per costruire un CDT:
-1. triangolazione iniziale (utilizzando ad es. Ear Clipping o Sweep Line Algorithm). Nel mio caso con Poly2tri utilizza Sweep Line.
-2. si applica l'algoritmo di Flip di Lawson solo sugli archi interni che violano la condizione di Delaunay.
-
-La condizione di Delaunay per un insieme di punti: nessun punto deve trovarsi all'interno del cerchio circoscritto di un triangolo. Il centro di questo cerchio è chiamato centro del cerchio circoscritto al triangolo ed è equidistante da tutti i vertici.
-
-CDT presenta due caratteristiche importanti: evita la formazione di triangoli degeneri; consente di specificare esplicitamente quali segmenti debbano necessariamente far parte della triangolazione risultante.
-
-Dal punto di vista della complessità computazionale, nel caso in cui l’input sia un singolo poligono semplice, la CDT può essere calcolata in tempo lineare O(𝑛).
-<recording_DT.webm>
--->
 
 ---
 
@@ -831,7 +715,6 @@ L'insieme degli indici sono salvati in un **index buffer**.
 </div>
 
 ---
-
 
 <style scoped>
 .row { grid-template-columns: 1.1fr 1fr; align-items: center; }
